@@ -18,6 +18,7 @@ defmodule MolabhbotWeb.Router do
 
     get "/", PageController, :index
     resources "/users", UserController
+    resources "/roles", RoleController
   end
 
   # Other scopes may use custom stacks.
