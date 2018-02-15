@@ -20,6 +20,7 @@
           </ul>
         </nav>
         <span class="logo"></span>
+        <%= render "navbar.html", conn: @conn %>
       </header>
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
