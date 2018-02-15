@@ -9,6 +9,9 @@ defmodule Molabhbot.Accounts.User do
     field :password_hash, :string
     field :username, :string
 
+    field :password, :string, virtual: true
+    field :password_confirmation, :string, virtual: true
+
     timestamps()
   end
 
