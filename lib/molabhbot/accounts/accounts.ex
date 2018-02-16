@@ -6,7 +6,7 @@ defmodule Molabhbot.Accounts do
   import Ecto.Query, warn: false
   alias Molabhbot.Repo
 
-  alias Molabhbot.Accounts.User
+  alias Molabhbot.Accounts.{User,Encryption}
 
   @doc """
   Returns the list of users.
@@ -100,6 +100,29 @@ defmodule Molabhbot.Accounts do
   """
   def change_user(%User{} = user) do
     User.changeset(user, %{})
+  end
+
+  def find_user_by_username(username) do
+    Repo.get_by(User, username: username)
+  end
+
+  def check_username_and_password(username, password) do
+    changeset = User.login_changeset(%User{}, %{"username" => username, "password" => password})
+    if changeset.valid? do
+      case user=find_user_by_username(username) do
+        %User{password_hash: password_hash} ->
+          if Encryption.validate_password(password, password_hash) do
+            {:ok, user}
+          else
+            {:error, :invalid_password, changeset}
+          end
+        _ ->
+          Encryption.dummy_checkpw()
+          {:error, :invalid_user, changeset}
+      end
+    else
+      {:error, :validation_error, changeset}
+    end
   end
 
   alias Molabhbot.Accounts.Role

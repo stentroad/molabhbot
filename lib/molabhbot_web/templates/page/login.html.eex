@@ -1,5 +1,11 @@
 <%= form_for @changeset, :login, fn f -> %>
 
+<%= if @changeset.action do %>
+  <div class="alert alert-danger">
+    <p>Oops, something went wrong! Please check the errors below.</p>
+  </div>
+<% end %>
+
 <div class="form-group">
     <%= label f, :username, class: "control-label" %>
     <%= text_input f, :username, class: "form-control" %>
@@ -8,11 +14,11 @@
 
 <div class="form-group">
     <%= label f, :password, class: "control-label" %>
-    <%= text_input f, :password, class: "form-control" %>
+    <%= password_input f, :password, class: "form-control" %>
     <%= error_tag f, :password %>
 </div>
 
 <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
+    <%= submit "Login", class: "btn btn-primary" %>
 </div>
 <% end %>

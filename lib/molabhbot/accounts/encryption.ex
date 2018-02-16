@@ -9,4 +9,8 @@ defmodule Molabhbot.Accounts.Encryption do
     Bcrypt.checkpw(password, hash)
   end
 
+  def dummy_checkpw() do
+    Bcrypt.dummy_checkpw()
+  end
+
 end

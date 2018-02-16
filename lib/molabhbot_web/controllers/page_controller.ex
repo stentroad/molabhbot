@@ -12,9 +12,20 @@ defmodule MolabhbotWeb.PageController do
 
   def login(conn, params) do
     IO.inspect params, label: "login params"
-    changeset = Accounts.User.login_changeset(%Accounts.User{}, params["user"])
-
-    IO.inspect changeset, label: "login changeset"
-    render conn, "index.html"
+    user_params = params["user"]
+    case Accounts.check_username_and_password(user_params["username"], user_params["password"]) do
+      {:ok, user=%Accounts.User{}} ->
+        conn
+        |> put_flash(:info, "Login successful.")
+        |> render("index.html")
+      {:error,:validation_error,changeset} ->
+        conn
+        |> render("login.html", changeset: %{changeset | action: :login})
+      {:error,_,changeset} ->
+        conn
+        |> put_flash(:error, "Login failed..")
+        |> render("login.html", changeset: changeset)
+    end
   end
+
 end
