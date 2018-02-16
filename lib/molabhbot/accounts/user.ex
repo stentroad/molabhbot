@@ -20,9 +20,11 @@ defmodule Molabhbot.Accounts.User do
     user
     |> cast(attrs, [:username, :email, :password, :password_confirmation])
     |> validate_required([:username, :email, :password, :password_confirmation])
-    |> validate_format(:email, ~r/@/)
+    |> validate_length(:password, min: 5)
+    |> validate_length(:username, min: 5)
+    |> unique_constraint(:username)
     |> validate_confirmation(:password)
-    |> unique_constraint(:email)
+    |> validate_format(:email, ~r/@/)
     |> encrypt_password
   end
 
