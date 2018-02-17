@@ -16,7 +16,11 @@
                 <li><%= link "Users", to: user_path(@conn, :index) %></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                <%= if @conn.assigns[:user] do %>
+                <li><%= link "Logout", to: page_path(@conn, :logout) %></li>
+                <% else %>
                 <li><%= link "Login", to: page_path(@conn, :login) %></li>
+                <% end %>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->

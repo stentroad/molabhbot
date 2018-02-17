@@ -16,8 +16,9 @@ defmodule MolabhbotWeb.PageController do
     case Accounts.check_username_and_password(user_params["username"], user_params["password"]) do
       {:ok, user=%Accounts.User{}} ->
         conn
+        |> put_session(:user_id, user.id)
         |> put_flash(:info, "Login successful.")
-        |> render("index.html")
+        |> redirect(to: "/")
       {:error,:validation_error,changeset} ->
         conn
         |> render("login.html", changeset: %{changeset | action: :login})
@@ -26,6 +27,14 @@ defmodule MolabhbotWeb.PageController do
         |> put_flash(:error, "Login failed..")
         |> render("login.html", changeset: changeset)
     end
+  end
+
+  def logout(conn, _params) do
+    conn
+    |> delete_session(:user_id)
+    |> assign(:user, nil)
+    |> put_flash(:info, "Logged out")
+    |> redirect(to: "/")
   end
 
 end

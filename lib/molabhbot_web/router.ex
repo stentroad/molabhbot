@@ -15,6 +15,7 @@ defmodule MolabhbotWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   scope "/login", MolabhbotWeb do
@@ -24,25 +25,40 @@ defmodule MolabhbotWeb.Router do
     post "/", PageController, :login
   end
 
+  scope "/logout", MolabhbotWeb do
+    pipe_through :browser
+
+    get "/", PageController, :logout
+  end
+
   scope "/", MolabhbotWeb do
-    pipe_through :authenticated
     pipe_through :browser # Use the default browser stack
+    pipe_through :authenticated
 
     get "/", PageController, :index
-    resources "/users", UserController
     resources "/roles", RoleController
   end
 
   # Other scopes may use custom stacks.
   scope "/api", MolabhbotWeb do
-    pipe_through :authenticated
     pipe_through :api
+    pipe_through :authenticated
 
-    resources "/api/users", UserController
+    resources "/users", UserController
   end
 
   defp ensure_authenticated(conn,_) do
-    conn |> redirect(to: "/login")
+    user_id = Plug.Conn.get_session(conn, :user_id)
+    IO.inspect user_id, label: "logged in user_id"
+    if user_id do
+      conn
+      |> assign(:user, Molabhbot.Accounts.get_user!(user_id))
+      |> configure_session(renew: true)
+    else
+      conn
+      |> assign(:user, nil)
+      |> redirect(to: "/login")
+    end
   end
 
 end
