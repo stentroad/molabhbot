@@ -43,7 +43,8 @@ defmodule Molabhbot.Mixfile do
       {:cowboy, "~> 1.0"},
       {:sqlite_ecto2, "~> 2.2"},
       {:comeonin, "~> 4.1"},
-      {:bcrypt_elixir, "~> 1.0"}
+      {:bcrypt_elixir, "~> 1.0"},
+      {:phoenix_elm_warn, "~> 1.0", only: :dev, path: "../phoenix_elm_warn"},
     ]
   end
 
