@@ -22,7 +22,7 @@ import "phoenix_html"
 
 import Elm from "./elm.js"
 
-let counterDiv = document.getElementById("elm-app")
-if (counterDiv !== undefined) {
-    Elm.Main.embed(counterDiv)
+let elmDiv = document.getElementById("elm-app")
+if (elmDiv !== undefined) {
+    Elm.Main.embed(elmDiv)
 }
