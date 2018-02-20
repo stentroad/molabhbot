@@ -6,7 +6,6 @@
     "watch": "brunch watch --stdin"
   },
   "dependencies": {
-    "elm-brunch": "^0.10.0",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html"
   },
@@ -14,6 +13,7 @@
     "babel-brunch": "6.1.1",
     "brunch": "2.10.9",
     "clean-css-brunch": "2.10.0",
+    "elm-brunch": "file:../../elm-brunch",
     "uglify-js-brunch": "2.10.0"
   }
 }
