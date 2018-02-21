@@ -7,6 +7,8 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :molabhbot, MolabhbotWeb.Endpoint,
+  telegram_api_token: System.get_env("TELEGRAM_API_TOKEN"),
+  secret_key_telegram: System.get_env("SECRET_KEY_TELEGRAM"),
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
