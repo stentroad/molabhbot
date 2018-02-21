@@ -26,7 +26,10 @@ npm-debug.log
 # variables.
 /config/*.secret.exs
 
+/molabhbot.sqlite3
+
 # elm stuff
 assets/elm/elm-stuff/*
 !assets/elm/elm-stuff/exact-dependencies.json
 assets/js/elm.js
+
