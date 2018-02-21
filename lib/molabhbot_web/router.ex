@@ -47,6 +47,12 @@ defmodule MolabhbotWeb.Router do
     resources "/users", UserController
   end
 
+  scope "/telegram", MolabhbotWeb do
+    pipe_through :api
+
+    post "/new-message", TelegramController, :new_message
+  end
+
   defp ensure_authenticated(conn,_) do
     user_id = Plug.Conn.get_session(conn, :user_id)
     IO.inspect user_id, label: "logged in user_id"
