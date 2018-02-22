@@ -128,16 +128,17 @@ defmodule MolabhbotWeb.TelegramController do
   end
 
   def welcome_text(users) do
-    random_welcome_prefix() <> " " <> user_join(users) <> "!"
+    {phrase, punctuation} = random_welcome_prefix()
+    phrase <> " " <> user_join(users) <> punctuation
   end
 
   defp random_welcome_prefix() do
     [
-      "O que que pega Zé",
-      "Teje em casa,",
-      "Salve,",
-      "Boas vindas,",
-      "Seja bem-vinde,"
+      {"O que que pega", "?"},
+      {"Teje em casa,", "!"},
+      {"Salve,", "!"},
+      {"Boas vindas,", "!"},
+      {"Seja bem-vinde,", "!"}
     ] |> Enum.random
   end
 
@@ -150,7 +151,7 @@ defmodule MolabhbotWeb.TelegramController do
   end
 
   def user_join([u1,u2]) do
-    u1 <> " and " <> u2
+    u1 <> " e " <> u2
   end
 
   def user_join([u|rest]) do
