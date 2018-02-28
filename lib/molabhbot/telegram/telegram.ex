@@ -14,10 +14,7 @@ defmodule Molabhbot.Telegram do
   def process_msg(conn, msg) do
     response_text = cond do
       msg["entities"] ->
-        is_bot_command? = fn(e) -> e["type"] == "bot_command" end
-        bot_cmds = for e <- msg["entities"], is_bot_command?.(e), do: e
-        bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
-        Enum.join(bot_cmd_results, "\n")
+        process_entities(msg)
       msg["new_chat_members"] ->
         welcome_new_users(msg)
       msg["left_chat_member"] ->
@@ -31,6 +28,13 @@ defmodule Molabhbot.Telegram do
       ^response_text -> respond_to_msg(msg, response_text)
     end
     reply_no_content(conn)
+  end
+
+  def process_entities(msg) do
+    is_bot_command? = fn(e) -> e["type"] == "bot_command" end
+    bot_cmds = for e <- msg["entities"], is_bot_command?.(e), do: e
+    bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
+    Enum.join(bot_cmd_results, "\n")
   end
 
   def respond_to_msg(msg, response_text) do
