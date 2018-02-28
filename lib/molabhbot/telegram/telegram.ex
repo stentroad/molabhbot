@@ -12,22 +12,30 @@ defmodule Molabhbot.Telegram do
   end
 
   def process_msg(conn, msg) do
-    response_text = cond do
-      msg["entities"] ->
-        process_entities(msg)
-      msg["new_chat_members"] ->
-        welcome_new_users(msg)
-      msg["left_chat_member"] ->
-        nil
-      msg["text"] ->
-        [cmd | args] = String.split(msg["text"]," ")
-        process_text_msg(cmd,args)
+    response_text = case msg_type(msg) do
+      :entities -> process_entities(msg)
+      :new_chat_members -> welcome_new_users(msg)
+      :left_chat_member -> nil
+      :text -> process_text_msg(msg)
     end
-    case response_text do
-      nil -> nil
-      ^response_text -> respond_to_msg(msg, response_text)
+    if response_text do
+      respond_to_msg(msg, response_text)
     end
     reply_no_content(conn)
+  end
+
+  def msg_type(msg) do
+    cond do
+      msg["entities"] -> :entities
+      msg["new_chat_members"] -> :new_chat_members
+      msg["left_chat_member"] -> :left_chat_member
+      msg["text"] -> :text
+    end
+  end
+
+  def split_cmd_args(cmdline) do
+    [cmd | args] = String.split(cmdline," ")
+    {cmd, args}
   end
 
   def process_entities(msg) do
@@ -56,7 +64,7 @@ defmodule Molabhbot.Telegram do
   end
 
   def process_inline_query(conn, %{"inline_query" => query}=params) do
-    [cmd | _args] = String.split(query["query"], " ")
+    {cmd, _args} = split_cmd_args(query["query"])
     case cmd do
       "pinout" -> reply_to_pinout(conn, params)
       _ -> reply_no_content(conn)
@@ -119,14 +127,14 @@ defmodule Molabhbot.Telegram do
     IO.inspect post_result, label: "post result:"
   end
 
-
-  def process_text_msg(cmd,args) do
+  def process_text_msg(msg) do
+    {cmd, args} = split_cmd_args(msg["text"])
     # try it as a command
     process_cmd("/" <> cmd, args)
   end
 
   def handle_bot_cmd(msg) do
-    [cmd | args] = String.split(msg["text"]," ")
+    {cmd, args} = split_cmd_args(msg["text"])
     process_cmd(cmd,args)
   end
 
