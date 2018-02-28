@@ -1,5 +1,6 @@
 defmodule Molabhbot.Telegram do
   use MolabhbotWeb, :controller
+  alias Molabhbot.Telegram.Welcome
 
   def handle_new_message(conn, params) do
     IO.inspect params, label: "new-message params:"
@@ -160,38 +161,7 @@ defmodule Molabhbot.Telegram do
       new_chat_members,
       fn(%{"first_name" => first_name}) -> first_name end
     )
-    welcome_text(new_user_names)
-  end
-
-  def welcome_text(users) do
-    {phrase, punctuation} = random_welcome_prefix()
-    phrase <> " " <> user_join(users) <> punctuation
-  end
-
-  defp random_welcome_prefix() do
-    [
-      {"O que que pega", "?"},
-      {"Teje em casa,", "!"},
-      {"Salve,", "!"},
-      {"Boas vindas,", "!"},
-      {"Seja bem-vinde,", "!"}
-    ] |> Enum.random
-  end
-
-  def user_join([]) do
-    ""
-  end
-
-  def user_join([u]) do
-    u
-  end
-
-  def user_join([u1,u2]) do
-    u1 <> " e " <> u2
-  end
-
-  def user_join([u|rest]) do
-    u <> ", " <> user_join(rest)
+    Welcome.welcome_text(new_user_names)
   end
 
   def respond_to_pinout_msg(msg) do
