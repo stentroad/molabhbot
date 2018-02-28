@@ -63,25 +63,16 @@ defmodule Molabhbot.Telegram do
     IO.inspect post_result, label: "telegram post:"
   end
 
-  def process_inline_query(conn, %{"inline_query" => query}=params) do
+  def process_inline_query(conn, %{"inline_query" => query}) do
     {cmd, _args} = split_cmd_args(query["query"])
     case cmd do
-      "pinout" -> reply_to_pinout(conn, params)
-      _ -> reply_no_content(conn)
+      "pinout" -> reply_to_pinout(query)
+      _ -> nil # FIXME: reply with help or unknown command shrug?
     end
-  end
-
-  def process_callback_query(conn, params) do
-    cb_query = params["callback_query"]
-    board = get_board(cb_query["data"])
-    %{"callback_query_id": cb_query["id"],
-      "text": "a smaller message", #ascii_art_arduino(board),
-      "reply_to_message_id": cb_query["inline_message_id"]}
-      |> post_reply("answerCallbackQuery")
     reply_no_content(conn)
   end
 
-  def reply_to_pinout(conn, %{"inline_query" => query}) do
+  def reply_to_pinout(query) do
     %{"inline_query_id": query["id"],
       "results": [
         inline_query_result_article(ascii_art_arduino(:uno),"Uno","Arduino Uno"),
@@ -89,9 +80,8 @@ defmodule Molabhbot.Telegram do
         inline_query_result_article(ascii_art_arduino(:nano),"Nano","Arduino Nano"),
         inline_query_result_article(ascii_art_arduino(:"pro-mini"),"Pro-mini","Arduino Pro-mini")
       ],
-       "parse_mode": "Html"}
-    |> post_reply("answerInlineQuery")
-    reply_no_content(conn)
+      "parse_mode": "Html"}
+      |> post_reply("answerInlineQuery")
   end
 
   def inline_query_result_article(text, title, description) do
@@ -104,6 +94,16 @@ defmodule Molabhbot.Telegram do
       #"reply_markup": board_keyboard_markup(),
       "description": description
     }
+  end
+
+  def process_callback_query(conn, params) do
+    cb_query = params["callback_query"]
+    board = get_board(cb_query["data"])
+    %{"callback_query_id": cb_query["id"],
+      "text": ascii_art_arduino(board),
+      "reply_to_message_id": cb_query["inline_message_id"]}
+      |> post_reply("answerCallbackQuery")
+    reply_no_content(conn)
   end
 
   def board_keyboard_markup() do
