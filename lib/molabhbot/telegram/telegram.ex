@@ -11,12 +11,62 @@ defmodule Molabhbot.Telegram do
     end
   end
 
+  def process_msg(conn, msg) do
+    response_text = cond do
+      msg["entities"] ->
+        is_bot_command? = fn(e) -> e["type"] == "bot_command" end
+        bot_cmds = for e <- msg["entities"], is_bot_command?.(e), do: e
+        bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
+        Enum.join(bot_cmd_results, "\n")
+      msg["new_chat_members"] ->
+        welcome_new_users(msg)
+      msg["left_chat_member"] ->
+        nil
+      msg["text"] ->
+        [cmd | args] = String.split(msg["text"]," ")
+        process_text_msg(cmd,args)
+    end
+    case response_text do
+      nil -> nil
+      ^response_text -> respond_to_msg(msg, response_text)
+    end
+    reply_no_content(conn)
+  end
+
+  def respond_to_msg(msg, response_text) do
+    chat_id = msg["chat"]["id"]
+    msg_id = msg["message_id"]
+    api_token = MolabhbotWeb.Endpoint.config(:telegram_api_token)
+    post_result = HTTPoison.post!(
+      "https://api.telegram.org/bot#{api_token}/sendMessage",
+      Poison.encode!(
+        build_msg(
+          chat_id,
+          msg_id,
+          response_text
+        )
+      ),
+      [{"Content-type", "application/json"}]
+    )
+    IO.inspect post_result, label: "telegram post:"
+  end
+
   def process_inline_query(conn, %{"inline_query" => query}=params) do
     [cmd | _args] = String.split(query["query"], " ")
     case cmd do
       "pinout" -> reply_to_pinout(conn, params)
       _ -> reply_no_content(conn)
     end
+  end
+
+  def process_callback_query(conn, params) do
+    cb_query = params["callback_query"]
+    board = get_board(cb_query["data"])
+    %{"callback_query_id": cb_query["id"],
+      "text": "a smaller message", #ascii_art_arduino(board),
+      "reply_to_message_id": cb_query["inline_message_id"]}
+      |> post_reply("answerCallbackQuery")
+    reply_no_content(conn)
   end
 
   def reply_to_pinout(conn, %{"inline_query" => query}) do
@@ -53,16 +103,6 @@ defmodule Molabhbot.Telegram do
          ]]}
   end
 
-  def process_callback_query(conn, params) do
-    cb_query = params["callback_query"]
-    board = get_board(cb_query["data"])
-    %{"callback_query_id": cb_query["id"],
-      "text": "a smaller message", #ascii_art_arduino(board),
-      "reply_to_message_id": cb_query["inline_message_id"]}
-    |> post_reply("answerCallbackQuery")
-    reply_no_content(conn)
-  end
-
   def post_reply(reply, endpoint) do
     api_token = MolabhbotWeb.Endpoint.config(:telegram_api_token)
     post_result = HTTPoison.post!(
@@ -75,28 +115,9 @@ defmodule Molabhbot.Telegram do
     IO.inspect post_result, label: "post result:"
   end
 
-  def process_msg(conn, msg) do
-    response_msg = cond do
-      msg["entities"] ->
-        is_bot_command? = fn(e) -> e["type"] == "bot_command" end
-        bot_cmds = for e <- msg["entities"], is_bot_command?.(e), do: e
-        bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
-        Enum.join(bot_cmd_results, "\n")
-      msg["new_chat_members"] ->
-        welcome_new_users(msg)
-      msg["left_chat_member"] ->
-        nil
-      msg["text"] ->
-        [cmd | args] = String.split(msg["text"]," ")
-        process_words(cmd,args)
-    end
-    case response_msg do
-      nil -> reply_no_content(conn)
-      ^response_msg -> respond_to_msg(conn, msg, response_msg)
-    end
-  end
 
-  def process_words(cmd,args) do
+  def process_text_msg(cmd,args) do
+    # try it as a command
     process_cmd("/" <> cmd, args)
   end
 
@@ -185,26 +206,6 @@ defmodule Molabhbot.Telegram do
     "<pre>#{safe}</pre>"
   end
 
-  def respond_to_msg(conn, msg, response_text) do
-    chat_id = msg["chat"]["id"]
-    msg_id = msg["message_id"]
-    api_token = MolabhbotWeb.Endpoint.config(:telegram_api_token)
-    post_result = HTTPoison.post!(
-      "https://api.telegram.org/bot#{api_token}/sendMessage",
-      Poison.encode!(
-        build_msg(
-          chat_id,
-          msg_id,
-          response_text
-        )
-      ),
-      [{"Content-type", "application/json"}]
-    )
-    IO.inspect post_result, label: "telegram post:"
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(:no_content, "")
-  end
 
   def build_msg(chat_id, reply_id, text) do
     IO.inspect %{"chat_id": chat_id,
