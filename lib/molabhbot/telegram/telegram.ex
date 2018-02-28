@@ -3,7 +3,7 @@ defmodule Molabhbot.Telegram do
 
   def handle_new_message(conn, params) do
     IO.inspect params, label: "new-message params:"
-    msg = params["message"] || params["edited_message"]
+    msg = params["message"] || params["edited_message"] 
     cond do
       msg -> process_msg(conn, msg)
       params["inline_query"] -> process_inline_query(conn, params)
@@ -14,8 +14,7 @@ defmodule Molabhbot.Telegram do
   def process_inline_query(conn, %{"inline_query" => query}=params) do
     [cmd | _args] = String.split(query["query"], " ")
     case cmd do
-      "pinout" ->
-        reply_to_pinout(conn, params)
+      "pinout" -> reply_to_pinout(conn, params)
       _ -> reply_no_content(conn)
     end
   end
@@ -46,15 +45,13 @@ defmodule Molabhbot.Telegram do
   end
 
   def board_keyboard_markup() do
-    %{
-      "inline_keyboard": [[
+    %{"inline_keyboard": [[
            %{"text": "uno", "callback_data": "uno", "switch_inline_query": "/pinout uno"},
            %{"text": "mega", "callback_data": "mega", "switch_inline_query_current_chat": "/pinout mega"},
            %{"text": "nano", "callback_data": "nano"},
            %{"text": "pro-mini", "callback_data": "pro-mini"}
          ]]}
   end
-
 
   def process_callback_query(conn, params) do
     cb_query = params["callback_query"]
@@ -90,12 +87,17 @@ defmodule Molabhbot.Telegram do
       msg["left_chat_member"] ->
         nil
       msg["text"] ->
-        respond_to_pinout_msg(msg)
+        [cmd | args] = String.split(msg["text"]," ")
+        process_words(cmd,args)
     end
     case response_msg do
       nil -> reply_no_content(conn)
       ^response_msg -> respond_to_msg(conn, msg, response_msg)
     end
+  end
+
+  def process_words(cmd,args) do
+    process_cmd("/" <> cmd, args)
   end
 
   def handle_bot_cmd(msg) do
@@ -111,11 +113,12 @@ defmodule Molabhbot.Telegram do
   end
 
   def process_cmd("/pinout",args) do
-    ascii_art_arduino(get_board(Enum.join(args," ")))
+    board = get_board(Enum.join(args," "))
+    ascii_art_arduino(board)
   end
 
   def process_cmd(_,_) do
-    "commando invalido"
+    unknown_cmd_reply()
   end
 
   def welcome_new_users(msg) do
@@ -169,7 +172,7 @@ defmodule Molabhbot.Telegram do
       String.contains?(msg_txt,"mega") -> :mega
       String.contains?(msg_txt,"pro-mini") -> :"pro-mini"
       String.contains?(msg_txt,"nano") -> :nano
-      true -> :other
+      true -> :uno # uno by default, if unspecified or unmatched
     end
   end
 
@@ -216,4 +219,7 @@ defmodule Molabhbot.Telegram do
     |> send_resp(:no_content, "")
   end
 
+  def unknown_cmd_reply do
+    "¯\\(°_o)/¯"
+  end
 end
