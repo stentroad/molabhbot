@@ -20,7 +20,7 @@ defmodule Molabhbot.Mixfile do
   def application do
     [
       mod: {Molabhbot.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :timex]
     ]
   end
 
@@ -46,6 +46,7 @@ defmodule Molabhbot.Mixfile do
       {:bcrypt_elixir, "~> 1.0"},
       {:phoenix_elm_warn, "~> 1.0", only: :dev, path: "../phoenix_elm_warn"},
       {:httpoison, "~> 1.0"},
+      {:timex, "~> 3.2"},
     ]
   end
 
