@@ -46,13 +46,6 @@ defmodule Molabhbot.Telegram do
   def process_text_msg(msg) do
     {cmd, args} = split_cmd_args(msg["text"])
     # try it as a command
-  end
-
-  def respond_to_msg(response_text, msg) do
-    response_text
-    |> Message.chat_message_reply(msg)
-    |> post_reply("sendMessage")
-    |> IO.inspect(label: "telegram post")
     Command.process_cmd("/" <> cmd, args)
   end
 
@@ -61,6 +54,11 @@ defmodule Molabhbot.Telegram do
     Command.process_cmd(cmd,args)
   end
 
+  def respond_to_msg(response_text, msg) do
+    response_text
+    |> Message.chat_message_reply(msg)
+    |> Reply.post_reply("sendMessage")
+    |> IO.inspect(label: "telegram post")
   end
 
 end
