@@ -3,6 +3,7 @@ defmodule MolabhbotWeb.TelegramController do
   alias Molabhbot.Telegram
 
   def new_message(conn, params) do
+    IO.inspect params, label: "NEW MSG"
     Telegram.handle_new_message(params)
     reply_no_content(conn)
   end

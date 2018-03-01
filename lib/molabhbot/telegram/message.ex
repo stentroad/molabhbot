@@ -7,8 +7,11 @@ defmodule Molabhbot.Telegram.Message do
   alias Molabhbot.Telegram.Reply
 
   def process_message(msg) do
-    if response_text = process_specific_message(msg) do
-      respond_to_msg(response_text, msg)
+    if responses = process_specific_message(msg) do
+      case responses do
+        ^responses when is_list(responses) -> respond_to_msgs(responses, msg)
+        ^responses when not is_list(responses) -> respond_to_msgs([responses], msg)
+      end
     end
   end
 
@@ -32,28 +35,19 @@ defmodule Molabhbot.Telegram.Message do
   def process_text_msg(msg) do
     {cmd, args} = Util.split_cmd_args(msg["text"])
     # try it as a command
-    Command.process_cmd("/" <> cmd, args)
+    Command.process_cmd(msg, "/" <> cmd, args)
   end
 
-  def respond_to_msg(response_text, msg) do
-    response_text
-    |> chat_message_reply(msg)
+  def respond_to_msgs([], _), do: nil
+
+  def respond_to_msgs([response|rest], msg) do
+    respond_to_msg(response, msg)
+    respond_to_msgs(rest, msg)
+  end
+
+  def respond_to_msg(%{} = response,_) do
+    response
     |> Reply.post_reply("sendMessage")
-  end
-
-  def chat_message_reply(response_text, msg) do
-    chat_id = msg["chat"]["id"]
-    msg_id = msg["message_id"]
-    response_text
-    |> chat_message_reply(chat_id, msg_id)
-
-  end
-
-  def chat_message_reply(response_text, chat_id, reply_id) do
-    IO.inspect %{"chat_id": chat_id,
-                 "text": response_text,
-                 "parse_mode": "Html",
-                 "reply_to_message_id": reply_id}, label: "chat_message_reply:"
   end
 
 end
