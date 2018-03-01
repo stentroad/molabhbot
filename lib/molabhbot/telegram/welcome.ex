@@ -1,11 +1,11 @@
 defmodule Molabhbot.Telegram.Welcome do
 
   def welcome_text(users) do
-    {phrase, punctuation} = random_welcome_prefix()
+    {phrase, punctuation} = random_welcome_message()
     phrase <> " " <> user_join(users) <> punctuation
   end
 
-  defp random_welcome_prefix() do
+  defp random_welcome_message() do
     [
       {"O que que pega", "?"},
       {"Teje em casa,", "!"},
