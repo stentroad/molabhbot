@@ -1,5 +1,39 @@
 defmodule Molabhbot.Telegram.Message do
 
+  alias Molabhbot.Telegram.Command
+  alias Molabhbot.Telegram.Welcome
+  alias Molabhbot.Telegram.Reply
+  alias Molabhbot.Telegram
+
+  def process_message(msg) do
+    if response_text = process_specific_message(msg) do
+      respond_to_msg(response_text, msg)
+    end
+  end
+
+  def process_specific_message(%{"entities" => _} = msg), do: Command.process_bot_cmds(msg)
+  def process_specific_message(%{"new_chat_members" => _} = msg), do: Welcome.welcome_new_users(msg)
+  def process_specific_message(%{"text" => _} = msg), do: process_text_msg(msg)
+  # TODO: implement seeya command
+  #def process_message(%{"left_chat_member" => _}), do: nil
+  def process_specific_message(msg) do
+    IO.inspect msg, label: "unhandled message:"
+    nil
+  end
+
+  def process_text_msg(msg) do
+    {cmd, args} = Telegram.split_cmd_args(msg["text"])
+    # try it as a command
+    Command.process_cmd("/" <> cmd, args)
+  end
+
+  def respond_to_msg(response_text, msg) do
+    response_text
+    |> chat_message_reply(msg)
+    |> Reply.post_reply("sendMessage")
+    |> IO.inspect(label: "telegram post")
+  end
+
   def chat_message_reply(response_text, msg) do
     chat_id = msg["chat"]["id"]
     msg_id = msg["message_id"]
