@@ -3,6 +3,7 @@ defmodule Molabhbot.Telegram.Message do
   alias Molabhbot.Telegram.Util
   alias Molabhbot.Telegram.Command
   alias Molabhbot.Telegram.Welcome
+  alias Molabhbot.Telegram.Left
   alias Molabhbot.Telegram.Reply
 
   def process_message(msg) do
@@ -13,9 +14,8 @@ defmodule Molabhbot.Telegram.Message do
 
   def process_specific_message(%{"entities" => _} = msg), do: Command.process_bot_cmds(msg)
   def process_specific_message(%{"new_chat_members" => _} = msg), do: Welcome.welcome_new_users(msg)
+  def process_specific_message(%{"left_chat_member" => _} = msg), do: Left.bye_bye(msg)
   def process_specific_message(%{"text" => _} = msg), do: process_text_msg(msg)
-  # TODO: implement seeya command
-  #def process_message(%{"left_chat_member" => _}), do: nil
   def process_specific_message(msg) do
     IO.inspect msg, label: "unhandled message:"
     nil

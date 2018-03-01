@@ -3,7 +3,6 @@ defmodule Molabhbot.Telegram do
   alias Molabhbot.Telegram.Message
   alias Molabhbot.Telegram.Inline
   alias Molabhbot.Telegram.Callback
-  alias Molabhbot.Telegram.Message
 
   def handle_new_message(%{"message" => msg}), do: Message.process_message(msg)
   def handle_new_message(%{"edited_message" => msg}), do: Message.process_message(msg)
