@@ -13,4 +13,8 @@ Valid commands are:
     Arduino.arduino(Enum.join(args," "))
   end
 
+  def command_unknown() do
+    "¯\\(°_o)/¯"
+  end
+
 end

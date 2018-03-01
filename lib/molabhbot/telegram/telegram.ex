@@ -86,8 +86,7 @@ defmodule Molabhbot.Telegram do
 
   def process_cmd("/help",_), do: Command.mola_bot_help()
   def process_cmd("/pinout",args), do: Command.pinout(args)
-  def process_cmd(_,_), do: unknown_cmd_reply()
-
+  def process_cmd(_,_), do: Command.commmand_unknown()
 
   def welcome_new_users(msg) do
     new_chat_members = msg["new_chat_members"]
@@ -98,7 +97,4 @@ defmodule Molabhbot.Telegram do
     Welcome.welcome_text(new_user_names)
   end
 
-  def unknown_cmd_reply do
-    "¯\\(°_o)/¯"
-  end
 end
