@@ -32,7 +32,7 @@ defmodule Molabhbot.Telegram.Command do
 
   defp event(msg) do
     "Event title?"
-    |> chat_message_reply(msg,%{"force_reply" => true})
+    |> chat_message_reply(msg,%{force_reply: true})
   end
 
   defp start(msg) do
