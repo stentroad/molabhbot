@@ -75,35 +75,9 @@ defmodule Molabhbot.Telegram do
   end
 
   def reply_to_pinout(query) do
-    %{"inline_query_id": query["id"],
-      "results": arduino_inline_results(),
-      "parse_mode": "Html"}
-      |> post_reply("answerInlineQuery")
-  end
-
-  def arduino_inline_results() do
-    for {board, title} <- arduino_defs() do
-      Arduino.ascii_art_arduino(board)
-      |> inline_query_result_article(title, "Arduino " <> title)
-    end
-  end
-
-  def arduino_defs() do
-    [{:uno,"Uno"},
-     {:mega,"Mega"},
-     {:nano,"Nano"},
-     {:"pro-mini","Pro-mini"}]
-  end
-
-  def inline_query_result_article(message_text, title, description) do
-    id = :crypto.hash(:md5, "inline_query_result_article:" <> message_text) |> Base.encode16
-    %{
-      "type": "article",
-      "id": id,
-      "title": title,
-      "input_message_content": %{"message_text": message_text, "parse_mode": "Html"},
-      "description": description
-    }
+    query
+    |> Arduino.inline_pinout_response()
+    |> post_reply("answerInlineQuery")
   end
 
   def process_callback_query(conn, params) do
