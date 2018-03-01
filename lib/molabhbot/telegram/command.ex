@@ -64,7 +64,7 @@ defmodule Molabhbot.Telegram.Command do
 
   def chat_message(response_text, %{"chat" => %{ "id" => chat_id }}, options \\ %{}) do
     %{"text": response_text,
-      "chat_id": chat_id
+      "chat_id": chat_id,
       "parse_mode": "Html"}
     |> Map.merge(options)
   end
