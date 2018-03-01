@@ -1,5 +1,4 @@
 defmodule Molabhbot.Telegram do
-  use MolabhbotWeb, :controller
   alias Molabhbot.Telegram.Welcome
   alias Molabhbot.Telegram.Arduino
   alias Molabhbot.Telegram.Message
@@ -121,13 +120,6 @@ defmodule Molabhbot.Telegram do
 
   def respond_to_pinout_msg(msg) do
     msg["text"] |> Arduino.arduino()
-  end
-
-
-  def reply_no_content(conn) do
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(:no_content, "")
   end
 
   def unknown_cmd_reply do
