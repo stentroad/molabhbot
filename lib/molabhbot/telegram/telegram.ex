@@ -92,7 +92,6 @@ defmodule Molabhbot.Telegram do
       "id": id,
       "title": title,
       "input_message_content": %{"message_text": text, "parse_mode": "Html"},
-      #"reply_markup": board_keyboard_markup(),
       "description": description
     }
   end
@@ -105,15 +104,6 @@ defmodule Molabhbot.Telegram do
       "reply_to_message_id": cb_query["inline_message_id"]}
       |> post_reply("answerCallbackQuery")
     reply_no_content(conn)
-  end
-
-  def board_keyboard_markup() do
-    %{"inline_keyboard": [[
-           %{"text": "uno", "callback_data": "uno", "switch_inline_query": "/pinout uno"},
-           %{"text": "mega", "callback_data": "mega", "switch_inline_query_current_chat": "/pinout mega"},
-           %{"text": "nano", "callback_data": "nano"},
-           %{"text": "pro-mini", "callback_data": "pro-mini"}
-         ]]}
   end
 
   def post_reply(reply, endpoint) do
