@@ -15,7 +15,7 @@ defmodule Molabhbot.Telegram do
   end
 
   def process_message(%{"entities" => _} = msg), do: process_entities(msg)
-  def process_message(%{"new_chat_members" => _} = msg), do: welcome_new_users(msg)
+  def process_message(%{"new_chat_members" => _} = msg), do: Welcome.welcome_new_users(msg)
   def process_message(%{"left_chat_member" => _}), do: nil
   def process_message(%{"text" => _} = msg), do: process_text_msg(msg)
 
@@ -88,13 +88,6 @@ defmodule Molabhbot.Telegram do
   def process_cmd("/pinout",args), do: Command.pinout(args)
   def process_cmd(_,_), do: Command.commmand_unknown()
 
-  def welcome_new_users(msg) do
-    new_chat_members = msg["new_chat_members"]
-    new_user_names = Enum.map(
-      new_chat_members,
-      fn(%{"first_name" => first_name}) -> first_name end
-    )
-    Welcome.welcome_text(new_user_names)
   end
 
 end
