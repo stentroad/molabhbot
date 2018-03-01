@@ -3,31 +3,21 @@ defmodule Molabhbot.Telegram do
   alias Molabhbot.Telegram.Arduino
   alias Molabhbot.Telegram.Message
 
-  def handle_new_message(%{"message" => msg}), do: process_message(msg)
-  def handle_new_message(%{"edited_message" => msg}), do: process_message(msg)
+  def handle_new_message(%{"message" => msg}), do: process_message_and_maybe_respond(msg)
+  def handle_new_message(%{"edited_message" => msg}), do: process_message_and_maybe_respond(msg)
   def handle_new_message(%{"inline_query" => _} = params), do: process_inline_query(params)
   def handle_new_message(%{"callback_query" => _} = params), do: process_callback_query(params)
 
-  def process_message(msg) do
-    response_text = case msg_type(msg) do
-      :entities -> process_entities(msg)
-      :new_chat_members -> welcome_new_users(msg)
-      :left_chat_member -> nil # TODO: seeya later
-      :text -> process_text_msg(msg)
-    end
-    if response_text do
+  def process_message_and_maybe_respond(msg) do
+    if response_text = process_message(msg) do
       respond_to_msg(response_text, msg)
     end
   end
 
-  def msg_type(msg) do
-    cond do
-      msg["entities"] -> :entities
-      msg["new_chat_members"] -> :new_chat_members
-      msg["left_chat_member"] -> :left_chat_member
-      msg["text"] -> :text
-    end
-  end
+  def process_message(%{"entities" => _} = msg), do: process_entities(msg)
+  def process_message(%{"new_chat_members" => _} = msg), do: welcome_new_users(msg)
+  def process_message(%{"left_chat_member" => _}), do: nil
+  def process_message(%{"text" => _} = msg), do: process_text_msg(msg)
 
   def split_cmd_args(cmdline) do
     [cmd | args] = String.split(cmdline," ")
