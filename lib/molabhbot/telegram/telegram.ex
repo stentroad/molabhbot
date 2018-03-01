@@ -8,13 +8,14 @@ defmodule Molabhbot.Telegram do
     IO.inspect params, label: "new-message params:"
     msg = params["message"] || params["edited_message"] 
     cond do
-      msg -> process_msg(conn, msg)
-      params["inline_query"] -> process_inline_query(conn, params)
-      params["callback_query"] -> process_callback_query(conn, params)
+      msg -> process_message(msg)
+      params["inline_query"] -> process_inline_query(params)
+      params["callback_query"] -> process_callback_query(params)
     end
+    reply_no_content(conn)
   end
 
-  def process_msg(conn, msg) do
+  def process_message(msg) do
     response_text = case msg_type(msg) do
       :entities -> process_entities(msg)
       :new_chat_members -> welcome_new_users(msg)
@@ -24,7 +25,6 @@ defmodule Molabhbot.Telegram do
     if response_text do
       respond_to_msg(response_text, msg)
     end
-    reply_no_content(conn)
   end
 
   def msg_type(msg) do
@@ -48,13 +48,12 @@ defmodule Molabhbot.Telegram do
     Enum.join(bot_cmd_results, "\n")
   end
 
-  def process_inline_query(conn, %{"inline_query" => query}) do
+  def process_inline_query(%{"inline_query" => query}) do
     {cmd, _args} = split_cmd_args(query["query"])
     case cmd do
       "pinout" -> reply_to_pinout(query)
       _ -> nil # FIXME: reply with help or unknown command shrug?
     end
-    reply_no_content(conn)
   end
 
   def reply_to_pinout(query) do
@@ -63,14 +62,13 @@ defmodule Molabhbot.Telegram do
     |> post_reply("answerInlineQuery")
   end
 
-  def process_callback_query(conn, params) do
+  def process_callback_query(params) do
     cb_query = params["callback_query"]
     arduino = cb_query["data"] |> Arduino.arduino()
     %{"callback_query_id": cb_query["id"],
       "text": arduino,
       "reply_to_message_id": cb_query["inline_message_id"]}
       |> post_reply("answerCallbackQuery")
-    reply_no_content(conn)
   end
 
   def post_reply(reply, endpoint) do
