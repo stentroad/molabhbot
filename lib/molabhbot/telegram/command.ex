@@ -2,11 +2,17 @@ defmodule Molabhbot.Telegram.Command do
 
   alias Molabhbot.Telegram.Arduino
 
-  def mola_bot_help() do
-    "Mola Bot Help
+  def process_cmd("/help",_), do: mola_bot_help()
+  def process_cmd("/pinout",args), do: pinout(args)
+  def process_cmd(_,_), do: command_unknown()
 
-Valid commands are:
-/help"
+  def mola_bot_help() do
+    """
+    Mola Bot Help
+
+    Valid commands are:
+    /help
+    """
   end
 
   def pinout(args) do

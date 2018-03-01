@@ -3,6 +3,7 @@ defmodule Molabhbot.Telegram do
   alias Molabhbot.Telegram.Arduino
   alias Molabhbot.Telegram.Message
   alias Molabhbot.Telegram.Inline
+  alias Molabhbot.Telegram.Command
 
   def handle_new_message(%{"message" => msg}), do: process_message_and_maybe_respond(msg)
   def handle_new_message(%{"edited_message" => msg}), do: process_message_and_maybe_respond(msg)
@@ -56,7 +57,6 @@ defmodule Molabhbot.Telegram do
   def process_text_msg(msg) do
     {cmd, args} = split_cmd_args(msg["text"])
     # try it as a command
-    process_cmd("/" <> cmd, args)
   end
 
   def respond_to_msg(response_text, msg) do
@@ -64,16 +64,13 @@ defmodule Molabhbot.Telegram do
     |> Message.chat_message_reply(msg)
     |> post_reply("sendMessage")
     |> IO.inspect(label: "telegram post")
+    Command.process_cmd("/" <> cmd, args)
   end
 
   def handle_bot_cmd(msg) do
     {cmd, args} = split_cmd_args(msg["text"])
-    process_cmd(cmd,args)
+    Command.process_cmd(cmd,args)
   end
-
-  def process_cmd("/help",_), do: Command.mola_bot_help()
-  def process_cmd("/pinout",args), do: Command.pinout(args)
-  def process_cmd(_,_), do: Command.commmand_unknown()
 
   end
 
