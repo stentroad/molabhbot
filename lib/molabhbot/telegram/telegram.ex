@@ -19,8 +19,12 @@ defmodule Molabhbot.Telegram do
 
   def process_message(%{"entities" => _} = msg), do: Command.process_bot_cmds(msg)
   def process_message(%{"new_chat_members" => _} = msg), do: Welcome.welcome_new_users(msg)
-  def process_message(%{"left_chat_member" => _}), do: nil
   def process_message(%{"text" => _} = msg), do: process_text_msg(msg)
+  #def process_message(%{"left_chat_member" => _}), do: nil
+  def process_message(msg) do
+    IO.inspect msg, label: "unhandled message:"
+    nil
+  end
 
   def split_cmd_args(cmdline) do
     [cmd | args] = String.split(cmdline," ")
