@@ -1,6 +1,6 @@
 defmodule Molabhbot.Telegram.Command do
 
-  alias Molabhbot.Telegram
+  alias Molabhbot.Telegram.Util
   alias Molabhbot.Telegram.Arduino
 
   def process_bot_cmds(msg) do
@@ -11,7 +11,7 @@ defmodule Molabhbot.Telegram.Command do
   end
 
   def handle_bot_cmd(msg) do
-    {cmd, args} = Telegram.split_cmd_args(msg["text"])
+    {cmd, args} = Util.split_cmd_args(msg["text"])
     process_cmd(cmd,args)
   end
 

@@ -10,9 +10,4 @@ defmodule Molabhbot.Telegram do
   def handle_new_message(%{"inline_query" => _} = params), do: Inline.process_inline_query(params)
   def handle_new_message(%{"callback_query" => _} = params), do: Callback.process_callback_query(params)
 
-  def split_cmd_args(cmdline) do
-    [cmd | args] = String.split(cmdline," ")
-    {cmd, args}
-  end
-
 end

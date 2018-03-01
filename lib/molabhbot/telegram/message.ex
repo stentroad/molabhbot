@@ -1,9 +1,9 @@
 defmodule Molabhbot.Telegram.Message do
 
+  alias Molabhbot.Telegram.Util
   alias Molabhbot.Telegram.Command
   alias Molabhbot.Telegram.Welcome
   alias Molabhbot.Telegram.Reply
-  alias Molabhbot.Telegram
 
   def process_message(msg) do
     if response_text = process_specific_message(msg) do
@@ -22,7 +22,7 @@ defmodule Molabhbot.Telegram.Message do
   end
 
   def process_text_msg(msg) do
-    {cmd, args} = Telegram.split_cmd_args(msg["text"])
+    {cmd, args} = Util.split_cmd_args(msg["text"])
     # try it as a command
     Command.process_cmd("/" <> cmd, args)
   end
@@ -46,7 +46,7 @@ defmodule Molabhbot.Telegram.Message do
     IO.inspect %{"chat_id": chat_id,
                  "text": response_text,
                  "parse_mode": "Html",
-                 "reply_to_message_id": reply_id}, label: "sending:"
+                 "reply_to_message_id": reply_id}, label: "chat_message_reply:"
   end
 
 end
