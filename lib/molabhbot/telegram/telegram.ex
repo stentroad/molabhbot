@@ -104,10 +104,6 @@ Valid commands are:
     Welcome.welcome_text(new_user_names)
   end
 
-  def respond_to_pinout_msg(msg) do
-    msg["text"] |> Arduino.arduino()
-  end
-
   def unknown_cmd_reply do
     "¯\\(°_o)/¯"
   end
