@@ -39,7 +39,6 @@ defmodule Molabhbot.Telegram.Message do
     response_text
     |> chat_message_reply(msg)
     |> Reply.post_reply("sendMessage")
-    |> IO.inspect(label: "telegram post")
   end
 
   def chat_message_reply(response_text, msg) do
