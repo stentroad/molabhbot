@@ -15,7 +15,7 @@ defmodule Molabhbot.Telegram do
     end
   end
 
-  def process_message(%{"entities" => _} = msg), do: process_entities(msg)
+  def process_message(%{"entities" => _} = msg), do: process_bot_cmds(msg)
   def process_message(%{"new_chat_members" => _} = msg), do: Welcome.welcome_new_users(msg)
   def process_message(%{"left_chat_member" => _}), do: nil
   def process_message(%{"text" => _} = msg), do: process_text_msg(msg)
@@ -25,7 +25,7 @@ defmodule Molabhbot.Telegram do
     {cmd, args}
   end
 
-  def process_entities(msg) do
+  def process_bot_cmds(msg) do
     is_bot_command? = fn(e) -> e["type"] == "bot_command" end
     bot_cmds = for e <- msg["entities"], is_bot_command?.(e), do: e
     bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
