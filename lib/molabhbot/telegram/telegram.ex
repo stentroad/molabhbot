@@ -4,16 +4,10 @@ defmodule Molabhbot.Telegram do
   alias Molabhbot.Telegram.Arduino
   alias Molabhbot.Telegram.Message
 
-  def handle_new_message(conn, params) do
-    IO.inspect params, label: "new-message params:"
-    msg = params["message"] || params["edited_message"] 
-    cond do
-      msg -> process_message(msg)
-      params["inline_query"] -> process_inline_query(params)
-      params["callback_query"] -> process_callback_query(params)
-    end
-    reply_no_content(conn)
-  end
+  def handle_new_message(%{"message" => msg} = params), do: process_message(msg)
+  def handle_new_message(%{"edited_message" => msg} = params), do: process_message(msg)
+  def handle_new_message(%{"inline_query" => _} = params), do: process_inline_query(params)
+  def handle_new_message(%{"callback_query" => _} = params), do: process_callback_query(params)
 
   def process_message(msg) do
     response_text = case msg_type(msg) do
