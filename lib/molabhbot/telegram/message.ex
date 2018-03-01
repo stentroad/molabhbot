@@ -12,7 +12,7 @@ defmodule Molabhbot.Telegram.Message do
     end
   end
 
-  def process_specific_message(%{"chat" => _} = msg), do: Command.process_chat(msg)
+  def process_specific_message(%{"chat" => _} = msg), do: process_chat(msg)
   def process_specific_message(%{"entities" => _} = msg), do: Command.process_bot_cmds(msg)
   def process_specific_message(%{"new_chat_members" => _} = msg), do: Welcome.welcome_new_users(msg)
   def process_specific_message(%{"left_chat_member" => _} = msg), do: Left.bye_bye(msg)
