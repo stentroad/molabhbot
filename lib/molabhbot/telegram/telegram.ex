@@ -2,6 +2,7 @@ defmodule Molabhbot.Telegram do
   use MolabhbotWeb, :controller
   alias Molabhbot.Telegram.Welcome
   alias Molabhbot.Telegram.Arduino
+  alias Molabhbot.Telegram.Message
 
   def handle_new_message(conn, params) do
     IO.inspect params, label: "new-message params:"
@@ -17,11 +18,11 @@ defmodule Molabhbot.Telegram do
     response_text = case msg_type(msg) do
       :entities -> process_entities(msg)
       :new_chat_members -> welcome_new_users(msg)
-      :left_chat_member -> nil
+      :left_chat_member -> nil # TODO: seeya later
       :text -> process_text_msg(msg)
     end
     if response_text do
-      respond_to_msg(msg, response_text)
+      respond_to_msg(response_text, msg)
     end
     reply_no_content(conn)
   end
@@ -45,24 +46,6 @@ defmodule Molabhbot.Telegram do
     bot_cmds = for e <- msg["entities"], is_bot_command?.(e), do: e
     bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
     Enum.join(bot_cmd_results, "\n")
-  end
-
-  def respond_to_msg(msg, response_text) do
-    chat_id = msg["chat"]["id"]
-    msg_id = msg["message_id"]
-    api_token = MolabhbotWeb.Endpoint.config(:telegram_api_token)
-    post_result = HTTPoison.post!(
-      "https://api.telegram.org/bot#{api_token}/sendMessage",
-      Poison.encode!(
-        build_msg(
-          chat_id,
-          msg_id,
-          response_text
-        )
-      ),
-      [{"Content-type", "application/json"}]
-    )
-    IO.inspect post_result, label: "telegram post:"
   end
 
   def process_inline_query(conn, %{"inline_query" => query}) do
@@ -108,6 +91,13 @@ defmodule Molabhbot.Telegram do
     process_cmd("/" <> cmd, args)
   end
 
+  def respond_to_msg(response_text, msg) do
+    response_text
+    |> Message.chat_message_reply(msg)
+    |> post_reply("sendMessage")
+    |> IO.inspect(label: "telegram post")
+  end
+
   def handle_bot_cmd(msg) do
     {cmd, args} = split_cmd_args(msg["text"])
     process_cmd(cmd,args)
@@ -141,12 +131,6 @@ defmodule Molabhbot.Telegram do
     msg["text"] |> Arduino.arduino()
   end
 
-  def build_msg(chat_id, reply_id, text) do
-    IO.inspect %{"chat_id": chat_id,
-                 "text": text,
-                 "parse_mode": "Html",
-                 "reply_to_message_id": reply_id}, label: "sending:"
-  end
 
   def reply_no_content(conn) do
     conn
