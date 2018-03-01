@@ -84,16 +84,10 @@ defmodule Molabhbot.Telegram do
     process_cmd(cmd,args)
   end
 
-  def process_cmd("/help",_), do: mola_bot_help()
+  def process_cmd("/help",_), do: Command.mola_bot_help()
   def process_cmd("/pinout",args), do: Arduino.arduino(Enum.join(args," "))
   def process_cmd(_,_), do: unknown_cmd_reply()
 
-  def mola_bot_help do
-    "Mola Bot Help
-
-Valid commands are:
-/help "
-  end
 
   def welcome_new_users(msg) do
     new_chat_members = msg["new_chat_members"]
