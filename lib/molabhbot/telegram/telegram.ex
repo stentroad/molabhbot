@@ -1,6 +1,7 @@
 defmodule Molabhbot.Telegram do
   use MolabhbotWeb, :controller
   alias Molabhbot.Telegram.Welcome
+  alias Molabhbot.Telegram.Arduino
 
   def handle_new_message(conn, params) do
     IO.inspect params, label: "new-message params:"
@@ -76,10 +77,10 @@ defmodule Molabhbot.Telegram do
   def reply_to_pinout(query) do
     %{"inline_query_id": query["id"],
       "results": [
-        inline_query_result_article(ascii_art_arduino(:uno),"Uno","Arduino Uno"),
-        inline_query_result_article(ascii_art_arduino(:mega),"Mega","Arduino Mega"),
-        inline_query_result_article(ascii_art_arduino(:nano),"Nano","Arduino Nano"),
-        inline_query_result_article(ascii_art_arduino(:"pro-mini"),"Pro-mini","Arduino Pro-mini")
+        inline_query_result_article(Arduino.ascii_art_arduino(:uno),"Uno","Arduino Uno"),
+        inline_query_result_article(Arduino.ascii_art_arduino(:mega),"Mega","Arduino Mega"),
+        inline_query_result_article(Arduino.ascii_art_arduino(:nano),"Nano","Arduino Nano"),
+        inline_query_result_article(Arduino.ascii_art_arduino(:"pro-mini"),"Pro-mini","Arduino Pro-mini")
       ],
       "parse_mode": "Html"}
       |> post_reply("answerInlineQuery")
@@ -98,9 +99,9 @@ defmodule Molabhbot.Telegram do
 
   def process_callback_query(conn, params) do
     cb_query = params["callback_query"]
-    board = get_board(cb_query["data"])
+    arduino = cb_query["data"] |> Arduino.arduino()
     %{"callback_query_id": cb_query["id"],
-      "text": ascii_art_arduino(board),
+      "text": arduino,
       "reply_to_message_id": cb_query["inline_message_id"]}
       |> post_reply("answerCallbackQuery")
     reply_no_content(conn)
@@ -137,8 +138,7 @@ defmodule Molabhbot.Telegram do
   end
 
   def process_cmd("/pinout",args) do
-    board = get_board(Enum.join(args," "))
-    ascii_art_arduino(board)
+    Arduino.arduino(Enum.join(args," "))
   end
 
   def process_cmd(_,_) do
@@ -155,29 +155,8 @@ defmodule Molabhbot.Telegram do
   end
 
   def respond_to_pinout_msg(msg) do
-    msg_text = msg["text"]
-    ascii_art_arduino(get_board(msg_text))
+    msg["text"] |> Arduino.arduino()
   end
-
-  def get_board(msg_txt) do
-    cond do
-      String.contains?(msg_txt,"uno") -> :uno
-      String.contains?(msg_txt,"mega") -> :mega
-      String.contains?(msg_txt,"pro-mini") -> :"pro-mini"
-      String.contains?(msg_txt,"nano") -> :nano
-      true -> :uno # uno by default, if unspecified or unmatched
-    end
-  end
-
-  def ascii_art_arduino(board) do
-    {:safe, safe} = (
-      Application.app_dir(:molabhbot, "priv/ascii-art/#{board}.txt")
-      |> File.read!()
-      |> Phoenix.HTML.html_escape()
-    )
-    "<pre>#{safe}</pre>"
-  end
-
 
   def build_msg(chat_id, reply_id, text) do
     IO.inspect %{"chat_id": chat_id,
