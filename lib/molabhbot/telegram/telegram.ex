@@ -76,23 +76,32 @@ defmodule Molabhbot.Telegram do
 
   def reply_to_pinout(query) do
     %{"inline_query_id": query["id"],
-      "results": [
-        inline_query_result_article(Arduino.ascii_art_arduino(:uno),"Uno","Arduino Uno"),
-        inline_query_result_article(Arduino.ascii_art_arduino(:mega),"Mega","Arduino Mega"),
-        inline_query_result_article(Arduino.ascii_art_arduino(:nano),"Nano","Arduino Nano"),
-        inline_query_result_article(Arduino.ascii_art_arduino(:"pro-mini"),"Pro-mini","Arduino Pro-mini")
-      ],
+      "results": arduino_inline_results(),
       "parse_mode": "Html"}
       |> post_reply("answerInlineQuery")
   end
 
-  def inline_query_result_article(text, title, description) do
-    id = :crypto.hash(:md5, "inline_query_result_article:" <> text) |> Base.encode16
+  def arduino_inline_results() do
+    for {board, title} <- arduino_defs() do
+      Arduino.ascii_art_arduino(board)
+      |> inline_query_result_article(title, "Arduino " <> title)
+    end
+  end
+
+  def arduino_defs() do
+    [{:uno,"Uno"},
+     {:mega,"Mega"},
+     {:nano,"Nano"},
+     {:"pro-mini","Pro-mini"}]
+  end
+
+  def inline_query_result_article(message_text, title, description) do
+    id = :crypto.hash(:md5, "inline_query_result_article:" <> message_text) |> Base.encode16
     %{
       "type": "article",
       "id": id,
       "title": title,
-      "input_message_content": %{"message_text": text, "parse_mode": "Html"},
+      "input_message_content": %{"message_text": message_text, "parse_mode": "Html"},
       "description": description
     }
   end
