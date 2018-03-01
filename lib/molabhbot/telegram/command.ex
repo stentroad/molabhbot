@@ -15,9 +15,9 @@ defmodule Molabhbot.Telegram.Command do
     process_cmd(cmd,args)
   end
 
-  defp process_cmd("/help",_), do: mola_bot_help()
-  defp process_cmd("/pinout",args), do: pinout(args)
-  defp process_cmd(_,_), do: command_unknown()
+  def process_cmd("/help",_), do: mola_bot_help()
+  def process_cmd("/pinout",args), do: pinout(args)
+  def process_cmd(_,_), do: command_unknown()
 
   defp mola_bot_help() do
     """
