@@ -2,10 +2,11 @@ defmodule Molabhbot.Telegram do
   alias Molabhbot.Telegram.Welcome
   alias Molabhbot.Telegram.Arduino
   alias Molabhbot.Telegram.Message
+  alias Molabhbot.Telegram.Inline
 
   def handle_new_message(%{"message" => msg}), do: process_message_and_maybe_respond(msg)
   def handle_new_message(%{"edited_message" => msg}), do: process_message_and_maybe_respond(msg)
-  def handle_new_message(%{"inline_query" => _} = params), do: process_inline_query(params)
+  def handle_new_message(%{"inline_query" => _} = params), do: Inline.process_inline_query(params)
   def handle_new_message(%{"callback_query" => _} = params), do: process_callback_query(params)
 
   def process_message_and_maybe_respond(msg) do
@@ -29,20 +30,6 @@ defmodule Molabhbot.Telegram do
     bot_cmds = for e <- msg["entities"], is_bot_command?.(e), do: e
     bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
     Enum.join(bot_cmd_results, "\n")
-  end
-
-  def process_inline_query(%{"inline_query" => query}) do
-    {cmd, _args} = split_cmd_args(query["query"])
-    case cmd do
-      "pinout" -> reply_to_pinout(query)
-      _ -> nil # FIXME: reply with help or unknown command shrug?
-    end
-  end
-
-  def reply_to_pinout(query) do
-    query
-    |> Arduino.inline_pinout_response()
-    |> post_reply("answerInlineQuery")
   end
 
   def process_callback_query(params) do
