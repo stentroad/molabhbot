@@ -3,6 +3,7 @@ defmodule Molabhbot.Telegram do
   alias Molabhbot.Telegram.Arduino
   alias Molabhbot.Telegram.Message
   alias Molabhbot.Telegram.Inline
+  alias Molabhbot.Telegram.Reply
   alias Molabhbot.Telegram.Command
 
   def handle_new_message(%{"message" => msg}), do: process_message_and_maybe_respond(msg)
@@ -39,19 +40,7 @@ defmodule Molabhbot.Telegram do
     %{"callback_query_id": cb_query["id"],
       "text": arduino,
       "reply_to_message_id": cb_query["inline_message_id"]}
-      |> post_reply("answerCallbackQuery")
-  end
-
-  def post_reply(reply, endpoint) do
-    api_token = MolabhbotWeb.Endpoint.config(:telegram_api_token)
-    post_result = HTTPoison.post!(
-      "https://api.telegram.org/bot#{api_token}/#{endpoint}",
-      Poison.encode!(
-        IO.inspect reply, label: "posting:"
-      ),
-      [{"Content-type", "application/json"}]
-    )
-    IO.inspect post_result, label: "post result:"
+      |> Reply.post_reply("answerCallbackQuery")
   end
 
   def process_text_msg(msg) do
