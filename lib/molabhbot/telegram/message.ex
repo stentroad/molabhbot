@@ -13,7 +13,6 @@ defmodule Molabhbot.Telegram.Message do
   end
 
   def process_specific_message(%{"chat" => _} = msg), do: process_chat(msg)
-  def process_specific_message(%{"entities" => _} = msg), do: Command.process_bot_cmds(msg)
   def process_specific_message(%{"new_chat_members" => _} = msg), do: Welcome.welcome_new_users(msg)
   def process_specific_message(%{"left_chat_member" => _} = msg), do: Left.bye_bye(msg)
   def process_specific_message(%{"text" => _} = msg), do: process_text_msg(msg)
@@ -23,9 +22,11 @@ defmodule Molabhbot.Telegram.Message do
   end
 
   def process_chat(msg) do
-    IO.inspect msg, label: "chat_message"
-    {cmd, args} = Util.split_cmd_args(msg["text"])
-    Command.process_cmd("/" <> cmd, args)
+    if Command.message_contains_bot_commands?(msg) do
+      Command.process_bot_cmds(msg)
+    else
+      process_text_msg(msg)
+    end
   end
 
   def process_text_msg(msg) do

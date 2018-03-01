@@ -3,9 +3,17 @@ defmodule Molabhbot.Telegram.Command do
   alias Molabhbot.Telegram.Util
   alias Molabhbot.Telegram.Arduino
 
-  def process_bot_cmds(msg) do
+  def message_contains_bot_commands?(msg) do
+    msg["entities"] && not Enum.empty?(filter_bot_cmds(msg))
+  end
+
+  defp filter_bot_cmds(msg) do
     is_bot_command? = fn(e) -> e["type"] == "bot_command" end
-    bot_cmds = for e <- msg["entities"], is_bot_command?.(e), do: e
+    for e <- msg["entities"], is_bot_command?.(e), do: e
+  end
+
+  def handle_bot_cmds(msg) do
+    bot_cmds = filter_bot_cmds(msg)
     bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
     Enum.join(bot_cmd_results, "\n")
   end
