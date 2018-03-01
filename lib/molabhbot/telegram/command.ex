@@ -12,7 +12,7 @@ defmodule Molabhbot.Telegram.Command do
     for e <- msg["entities"], is_bot_command?.(e), do: e
   end
 
-  def handle_bot_cmds(msg) do
+  def process_bot_cmds(msg) do
     bot_cmds = filter_bot_cmds(msg)
     bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
     Enum.join(bot_cmd_results, "\n")
@@ -24,8 +24,15 @@ defmodule Molabhbot.Telegram.Command do
   end
 
   def process_cmd("/help",_), do: mola_bot_help()
+  def process_cmd("/start",_), do: start()
   def process_cmd("/pinout",args), do: pinout(args)
   def process_cmd(_,_), do: command_unknown()
+
+  defp start() do
+    """
+    Welcome to Mola Bot!
+    """
+  end
 
   defp mola_bot_help() do
     """
