@@ -5,11 +5,12 @@ defmodule Molabhbot.Telegram do
   alias Molabhbot.Telegram.Inline
   alias Molabhbot.Telegram.Reply
   alias Molabhbot.Telegram.Command
+  alias Molabhbot.Telegram.Callback
 
   def handle_new_message(%{"message" => msg}), do: process_message_and_maybe_respond(msg)
   def handle_new_message(%{"edited_message" => msg}), do: process_message_and_maybe_respond(msg)
   def handle_new_message(%{"inline_query" => _} = params), do: Inline.process_inline_query(params)
-  def handle_new_message(%{"callback_query" => _} = params), do: process_callback_query(params)
+  def handle_new_message(%{"callback_query" => _} = params), do: Callback.process_callback_query(params)
 
   def process_message_and_maybe_respond(msg) do
     if response_text = process_message(msg) do
@@ -29,15 +30,6 @@ defmodule Molabhbot.Telegram do
   def split_cmd_args(cmdline) do
     [cmd | args] = String.split(cmdline," ")
     {cmd, args}
-  end
-
-  def process_callback_query(params) do
-    cb_query = params["callback_query"]
-    arduino = cb_query["data"] |> Arduino.arduino()
-    %{"callback_query_id": cb_query["id"],
-      "text": arduino,
-      "reply_to_message_id": cb_query["inline_message_id"]}
-      |> Reply.post_reply("answerCallbackQuery")
   end
 
   def process_text_msg(msg) do
