@@ -27,23 +27,22 @@ defmodule Molabhbot.Telegram do
     nil
   end
 
-  def split_cmd_args(cmdline) do
-    [cmd | args] = String.split(cmdline," ")
-    {cmd, args}
-  end
-
   def process_text_msg(msg) do
     {cmd, args} = split_cmd_args(msg["text"])
     # try it as a command
     Command.process_cmd("/" <> cmd, args)
   end
 
-
   def respond_to_msg(response_text, msg) do
     response_text
     |> Message.chat_message_reply(msg)
     |> Reply.post_reply("sendMessage")
     |> IO.inspect(label: "telegram post")
+  end
+
+  def split_cmd_args(cmdline) do
+    [cmd | args] = String.split(cmdline," ")
+    {cmd, args}
   end
 
 end
