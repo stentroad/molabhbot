@@ -32,7 +32,7 @@ defmodule Molabhbot.Telegram.Command do
 
   defp event(msg) do
     "Event title?"
-    |> chat_message_reply(msg,%{force_reply: true})
+    |> chat_message(msg,%{force_reply: true})
   end
 
   defp start(msg) do
@@ -60,6 +60,13 @@ defmodule Molabhbot.Telegram.Command do
   defp command_unknown(msg) do
     "¯\\(°_o)/¯"
     |> chat_message_reply(msg)
+  end
+
+  def chat_message(response_text, %{"chat" => %{ "id" => chat_id }}, options \\ %{}) do
+    %{"text": response_text,
+      "chat_id": chat_id
+      "parse_mode": "Html"}
+    |> Map.merge(options)
   end
 
   def chat_message_reply(response_text, %{"message_id" => msg_id, "chat" => %{ "id" => chat_id }}, options \\ %{}) do
