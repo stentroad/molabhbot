@@ -1,11 +1,13 @@
 defmodule Molabhbot.Telegram.Welcome do
 
   alias Molabhbot.Telegram.User
+  alias Molabhbot.Telegram.Build
 
-  def welcome_new_users(%{"new_chat_members" => new_chat_members}) do
+  def welcome_new_users(%{"new_chat_members" => new_chat_members}=msg) do
     new_chat_members
     |> first_names()
     |> welcome_text()
+    |> Build.chat_message_reply(msg)
   end
 
   defp first_names(members), do: members |> Enum.map(&User.first_name/1)

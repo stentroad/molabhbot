@@ -2,6 +2,7 @@ defmodule Molabhbot.Telegram.Command do
 
   alias Molabhbot.Telegram.Util
   alias Molabhbot.Telegram.Arduino
+  alias Molabhbot.Telegram.Build
 
   def message_contains_bot_commands?(msg) do
     msg["entities"] && not Enum.empty?(filter_bot_cmds(msg))
@@ -32,14 +33,14 @@ defmodule Molabhbot.Telegram.Command do
 
   defp event(msg) do
     "Event title?"
-    |> chat_message(msg,%{force_reply: true})
+    |> Build.chat_message(msg,%{force_reply: true})
   end
 
   defp start(msg) do
     """
     Welcome to Mola Bot!
     """
-    |> chat_message_reply(msg)
+    |> Build.chat_message_reply(msg)
   end
 
   defp mola_bot_help(msg) do
@@ -49,31 +50,17 @@ defmodule Molabhbot.Telegram.Command do
     Valid commands are:
     /help
     """
-    |> chat_message_reply(msg)
+    |> Build.chat_message_reply(msg)
   end
 
   defp pinout(msg,args) do
     Arduino.arduino(Enum.join(args," "))
-    |> chat_message_reply(msg)
+    |> Build.chat_message_reply(msg)
   end
 
   defp command_unknown(msg) do
     "¯\\(°_o)/¯"
-    |> chat_message_reply(msg)
+    |> Build.chat_message_reply(msg)
   end
 
-  def chat_message(response_text, %{"chat" => %{ "id" => chat_id }}, options \\ %{}) do
-    %{"text": response_text,
-      "chat_id": chat_id,
-      "parse_mode": "Html"}
-    |> Map.merge(options)
-  end
-
-  def chat_message_reply(response_text, %{"message_id" => msg_id, "chat" => %{ "id" => chat_id }}, options \\ %{}) do
-    %{"text": response_text,
-      "chat_id": chat_id,
-      "reply_to_message_id": msg_id,
-      "parse_mode": "Html"}
-      |> Map.merge(options)
-  end
 end
