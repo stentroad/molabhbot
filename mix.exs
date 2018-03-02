@@ -47,6 +47,8 @@ defmodule Molabhbot.Mixfile do
       {:phoenix_elm_warn, "~> 1.0", only: :dev, path: "../phoenix_elm_warn"},
       {:httpoison, "~> 1.0"},
       {:timex, "~> 3.2"},
+      {:gen_state_machine, "~> 2.0"},
+      {:gproc, "~> 0.6.1"},
     ]
   end
 
