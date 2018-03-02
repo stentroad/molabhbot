@@ -15,10 +15,10 @@ defmodule Molabhbot.Telegram.Message do
     end
   end
 
-  def process_specific_message(%{"chat" => _} = msg), do: process_chat(msg)
   def process_specific_message(%{"new_chat_members" => _} = msg), do: Welcome.welcome_new_users(msg)
   def process_specific_message(%{"left_chat_member" => _} = msg), do: Left.bye_bye(msg)
   def process_specific_message(%{"text" => _} = msg), do: process_text_msg(msg)
+  def process_specific_message(%{"chat" => _} = msg), do: process_chat(msg)
   def process_specific_message(msg) do
     IO.inspect msg, label: "unhandled message:"
     nil
