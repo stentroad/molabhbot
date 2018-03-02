@@ -1,10 +1,10 @@
 defmodule Molabhbot.Telegram.Message do
 
-  alias Molabhbot.Telegram.Util
   alias Molabhbot.Telegram.Command
   alias Molabhbot.Telegram.Welcome
   alias Molabhbot.Telegram.Left
   alias Molabhbot.Telegram.Reply
+  alias Molabhbot.Chat
 
   def process_message(msg) do
     if responses = process_specific_message(msg) do
@@ -17,7 +17,6 @@ defmodule Molabhbot.Telegram.Message do
 
   def process_specific_message(%{"new_chat_members" => _} = msg), do: Welcome.welcome_new_users(msg)
   def process_specific_message(%{"left_chat_member" => _} = msg), do: Left.bye_bye(msg)
-  def process_specific_message(%{"text" => _} = msg), do: process_text_msg(msg)
   def process_specific_message(%{"chat" => _} = msg), do: process_chat(msg)
   def process_specific_message(msg) do
     IO.inspect msg, label: "unhandled message:"
@@ -33,9 +32,13 @@ defmodule Molabhbot.Telegram.Message do
   end
 
   def process_text_msg(msg) do
-    {cmd, args} = Util.split_cmd_args(msg["text"])
-    # try it as a command
-    Command.process_cmd(msg, "/" <> cmd, args)
+    chat_id = msg["chat"]["id"]
+    if chat_id && Chat.already_chatting?(chat_id) do
+      Chat.new_msg(msg)
+      nil
+    else
+      Command.command_unknown(msg)
+    end
   end
 
   def respond_to_msgs([], _), do: nil
@@ -45,6 +48,7 @@ defmodule Molabhbot.Telegram.Message do
     respond_to_msgs(rest, msg)
   end
 
+  def respond_to_msg(nil,_), do: nil
   def respond_to_msg(%{} = response,_) do
     response
     |> Reply.post_reply("sendMessage")

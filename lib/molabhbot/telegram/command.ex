@@ -3,6 +3,7 @@ defmodule Molabhbot.Telegram.Command do
   alias Molabhbot.Telegram.Util
   alias Molabhbot.Telegram.Arduino
   alias Molabhbot.Telegram.Build
+  alias Molabhbot.Chat
 
   def message_contains_bot_commands?(msg) do
     msg["entities"] && not Enum.empty?(filter_bot_cmds(msg))
@@ -32,8 +33,9 @@ defmodule Molabhbot.Telegram.Command do
   def process_cmd(msg, _, _), do: command_unknown(msg)
 
   defp event(msg) do
-    "Event title?"
-    |> Build.chat_message(msg,%{force_reply: true})
+    IO.inspect Chat.ensure_chat_started(msg), label: "chat start"
+    Chat.new_msg(msg)
+    nil
   end
 
   defp start(msg) do
@@ -58,7 +60,7 @@ defmodule Molabhbot.Telegram.Command do
     |> Build.chat_message_reply(msg)
   end
 
-  defp command_unknown(msg) do
+  def command_unknown(msg) do
     "¯\\(°_o)/¯"
     |> Build.chat_message_reply(msg)
   end
