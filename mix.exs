@@ -49,6 +49,8 @@ defmodule Molabhbot.Mixfile do
       {:timex, "~> 3.2"},
       {:gen_state_machine, "~> 2.0"},
       {:gproc, "~> 0.6.1"},
+      {:fuzzyurl, "~> 0.9.1"},
+      {:floki, "~> 0.20.0"},
     ]
   end
 
