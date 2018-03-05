@@ -4,6 +4,7 @@ defmodule Molabhbot.Telegram.Command do
   alias Molabhbot.Telegram.Arduino
   alias Molabhbot.Telegram.Build
   alias Molabhbot.Chat
+  alias Molabhbot.Wiki
 
   def message_contains_bot_commands?(msg) do
     msg["entities"] && not Enum.empty?(filter_bot_cmds(msg))
@@ -30,6 +31,7 @@ defmodule Molabhbot.Telegram.Command do
   def process_cmd(msg, "/start", _), do: start(msg)
   def process_cmd(msg, "/pinout", args), do: pinout(msg,args)
   def process_cmd(msg, "/event", _), do: event(msg)
+  def process_cmd(msg, "/wiki", _), do: wiki(msg)
   def process_cmd(msg, _, _), do: command_unknown(msg)
 
   defp event(msg) do
@@ -58,6 +60,13 @@ defmodule Molabhbot.Telegram.Command do
   defp pinout(msg,args) do
     Arduino.arduino(Enum.join(args," "))
     |> Build.chat_message_reply(msg)
+  end
+
+  defp wiki(msg) do
+    IO.inspect Wiki.ensure_wiki_started(msg), label: "wiki start"
+    Wiki.new_msg(msg)
+    IO.inspect msg, label: "wiki msg"
+    nil
   end
 
   def command_unknown(msg) do
