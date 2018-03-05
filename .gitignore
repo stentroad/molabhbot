@@ -28,6 +28,7 @@ npm-debug.log
 
 /molabhbot.sqlite3
 /nogit
+start-dev
 
 # elm stuff
 assets/elm/elm-stuff/*
