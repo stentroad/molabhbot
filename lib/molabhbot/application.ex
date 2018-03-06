@@ -14,6 +14,7 @@ defmodule Molabhbot.Application do
       supervisor(MolabhbotWeb.Endpoint, []),
 
       worker(Molabhbot.WikiLinks, []),
+      worker(Molabhbot.Scheduler, []),
       # Start your own worker by calling: Molabhbot.Worker.start_link(arg1, arg2, arg3)
       # worker(Molabhbot.Worker, [arg1, arg2, arg3]),
     ]

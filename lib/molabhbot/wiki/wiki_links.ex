@@ -2,24 +2,32 @@ defmodule Molabhbot.WikiLinks do
 
   use GenServer
 
+  @url "http://wiki.labmola.xyz"
+
   def init(initial_state) do
     {:ok, initial_state, 0}
   end
 
   def handle_info(:timeout, state) do
-    url = "http://wiki.labmola.xyz"
-    {:noreply,
-     %{state | links: perform_initial_fetch(url)}
-    }
+    {:noreply, %{state | links: perform_initial_fetch(@url)}}
   end
 
   def handle_call(:get_links, _from, %{links: links} = state) do
     {:reply, {:ok, links}, state}
   end
 
+  def handle_cast(:refresh_links, state) do
+    IO.inspect "refreshing links", label: "wiki"
+    {:noreply, %{state | links: perform_initial_fetch(@url)}}
+  end
+
   def start_link() do
     initial_state = %{links: []}
     GenServer.start_link(__MODULE__, initial_state, name: __MODULE__)
+  end
+
+  def refresh_links() do
+    GenServer.cast(__MODULE__, :refresh_links)
   end
 
   def get_links!() do

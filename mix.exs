@@ -52,6 +52,7 @@ defmodule Molabhbot.Mixfile do
       {:fuzzyurl, "~> 0.9.1"},
       {:floki, "~> 0.20.0"},
       {:exsync, "~> 0.2.1", only: :dev},
+      {:quantum, "~> 2.2"},
     ]
   end
 

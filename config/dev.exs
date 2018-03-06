@@ -54,3 +54,10 @@ config :phoenix, :stacktrace_depth, 20
 config :molabhbot, Molabhbot.Repo,
   adapter: Sqlite.Ecto2,
   database: "molabhbot.sqlite3"
+
+# quantum scheduler "cron" jobs
+config :molabhbot, Molabhbot.Scheduler,
+  jobs: [
+    # refresh wiki links hourly
+    {"0 * * * *", {Molabhbot.WikiLinks, :refresh_links, []}}
+  ]
