@@ -5,6 +5,7 @@ defmodule Molabhbot.Telegram.Command do
   alias Molabhbot.Telegram.Build
   alias Molabhbot.Chat
   alias Molabhbot.Wiki
+  alias Molabhbot.Tag
 
   def message_contains_bot_commands?(msg) do
     msg["entities"] && not Enum.empty?(filter_bot_cmds(msg))
@@ -32,7 +33,15 @@ defmodule Molabhbot.Telegram.Command do
   def process_cmd(msg, "/pinout", args), do: pinout(msg,args)
   def process_cmd(msg, "/event", _), do: event(msg)
   def process_cmd(msg, "/wiki", _), do: wiki(msg)
+  def process_cmd(msg, "/tag", _), do: tag(msg)
+  def process_cmd(msg, "/tagdone", _), do: tag(msg)
   def process_cmd(msg, _, _), do: command_unknown(msg)
+
+  defp tag(msg) do
+    Tag.ensure_started(msg)
+    Tag.new_msg(msg)
+    nil
+  end
 
   defp event(msg) do
     IO.inspect Chat.ensure_chat_started(msg), label: "chat start"

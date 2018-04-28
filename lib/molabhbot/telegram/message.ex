@@ -5,6 +5,7 @@ defmodule Molabhbot.Telegram.Message do
   alias Molabhbot.Telegram.Left
   alias Molabhbot.Telegram.Reply
   alias Molabhbot.Chat
+  alias Molabhbot.Tag
 
   def process_message(msg) do
     if responses = process_specific_message(msg) do
@@ -33,10 +34,14 @@ defmodule Molabhbot.Telegram.Message do
 
   def process_text_msg(msg) do
     chat_id = msg["chat"]["id"]
-    if chat_id && Chat.already_chatting?(chat_id) do
+    cond do
+    chat_id && Chat.already_chatting?(chat_id) ->
       Chat.new_msg(msg)
       nil
-    else
+    chat_id && Tag.already_tagging?(chat_id) ->
+      Tag.new_msg(msg)
+      nil
+    true ->
       Command.command_unknown(msg)
     end
   end
