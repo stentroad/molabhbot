@@ -23,10 +23,10 @@ defmodule Molabhbot.Tag do
     {:next_state, :started, data, [{:reply, from, :ok}]}
   end
   def gather_tagged_content({:call, from}, {:new_msg, %{"text" => "/tagdone"}=msg}, data) do
-    IO.inspect data.content, label: "all content"
     data.content
     |> split()
-    |> IO.inspect(label: "after hashtag split")
+    |> save(data.content)
+
     "Ok, thanks! I'll process the tagged content and let you know."
     |> Build.chat_message(msg, %{force_reply: true})
     |> Reply.post_reply("sendMessage")
@@ -88,4 +88,11 @@ defmodule Molabhbot.Tag do
     is_pid(:gproc.where({:n,:l,{:fsm, :tag, chat_id}}))
   end
 
+  def save(tags, content) do
+    IO.puts("**********************************************************")
+    IO.inspect content, label: "content"
+    IO.puts("**********************************************************")
+    IO.inspect tags, label: "tags"
+    IO.puts("**********************************************************")
+  end
 end
