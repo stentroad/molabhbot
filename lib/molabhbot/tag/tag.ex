@@ -46,14 +46,19 @@ defmodule Molabhbot.Tag do
   end
 
   def split(content) when is_binary(content) do
-    parts = String.split(content, ~r{#\w+(\[[\w ]+\])?}, include_captures: true)
+    parts = String.split(content,
+      # e.g. #mola.expiry_date[2018-04-30] or #test[value] or just #test
+      ~r{#([\w-_]+)(\.[\w-_]+)?(\[[\w-_ ]+\])?}, include_captures: true
+    )
     for p <- parts, do: hash_taggify(p)
   end
 
   defp hash_taggify("#" <> hashtag) do
-    case Regex.run(~r{(\w+)(\[([\w ]+)\])?}, hashtag) do
-      [_,ht,_,val] -> {:hashtag, ht, val}
-      [_,ht] -> {:hashtag, ht}
+    case Regex.run(~r{([\w-_]+)(\.([\w-_]+))?(\[([\w-_ ]+)\])?}, hashtag) do
+      [_,ns, _, tag] -> {:hashtag, {ns, tag}}
+      [_,tag,"","",_,val] -> {:hashtag, tag, val}
+      [_,ns,_,tag,_,val] -> {:hashtag, {ns,tag}, val}
+      [_,tag] -> {:hashtag, tag}
     end
   end
   defp hash_taggify(other), do: other
