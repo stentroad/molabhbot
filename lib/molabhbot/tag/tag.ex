@@ -31,7 +31,7 @@ defmodule Molabhbot.Tag do
     |> Build.chat_message(msg, %{force_reply: true})
     |> Reply.post_reply("sendMessage")
 
-    {:next_state, :started, data, [{:reply, from, :ok}]}
+    {:next_state, :started, %{data | content: ""}, [{:reply, from, :ok}]}
   end
   def gather_tagged_content({:call, from}, {:new_msg, msg}, %{content: so_far}=data) do
     new_content = so_far <> msg["text"]
