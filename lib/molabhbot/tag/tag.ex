@@ -2,6 +2,7 @@ defmodule Molabhbot.Tag do
   use GenStateMachine, callback_mode: :state_functions
   alias Molabhbot.Telegram.Build
   alias Molabhbot.Telegram.Reply
+  alias Molabhbot.Search
 
   def init(%{chat_id: chat_id} = initial_data) do
     :gproc.reg({:n,:l,{:fsm, :tag, chat_id}})
@@ -25,6 +26,7 @@ defmodule Molabhbot.Tag do
   def gather_tagged_content({:call, from}, {:new_msg, %{"text" => "/tagdone"}=msg}, data) do
     data.content
     |> split()
+    |> tags_only()
     |> save(data.content)
 
     "Ok, thanks! I'll process the tagged content and let you know."
@@ -88,11 +90,39 @@ defmodule Molabhbot.Tag do
     is_pid(:gproc.where({:n,:l,{:fsm, :tag, chat_id}}))
   end
 
-  def save(tags, content) do
+  defp hashtag?({:hashtag, _, _}), do: true
+  defp hashtag?({:hashtag, _}), do: true
+  defp hashtag?(_), do: false
+
+  defp tags_only(tags) do
+    for t <- tags, hashtag?(t), do: t
+  end
+
+  defp save(tags, content) do
     IO.puts("**********************************************************")
     IO.inspect content, label: "content"
     IO.puts("**********************************************************")
     IO.inspect tags, label: "tags"
     IO.puts("**********************************************************")
+    save_tags(tags)
+  end
+
+  defp save_tags([]), do: :ok
+  defp save_tags([h|t]) do
+    save_tag(h)
+    save_tags(t)
+  end
+
+  defp save_tag({:hashtag, {ns,tag}, _val}) do
+    Search.find_or_create_tag(ns,tag)
+  end
+  defp save_tag({:hashtag, tag, _val}) do
+    Search.find_or_create_tag("__none",tag)
+  end
+  defp save_tag({:hashtag, {ns, tag}}) do
+    Search.find_or_create_tag(ns,tag)
+  end
+  defp save_tag({:hashtag, tag}) do
+    Search.find_or_create_tag("__none",tag)
   end
 end

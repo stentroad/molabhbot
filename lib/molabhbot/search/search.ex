@@ -102,6 +102,39 @@ defmodule Molabhbot.Search do
     Tag.changeset(tag, %{})
   end
 
+  def find_tag(ns, name) do
+    Repo.one(
+      from t in Tag,
+      select: t.id,
+      where: t.ns == ^ns,
+      where: t.name == ^name
+    )
+  end
+
+  @doc """
+  Check tag exists, creating it if not.
+
+  ## Examples
+
+  iex> ensure_tag(%{field: value})
+  {:ok, %Tag{}}
+
+  iex> ensure_tag(%{field: bad_value})
+  {:error, %Ecto.Changeset{}}
+
+  """
+  def find_or_create_tag(ns, name) do
+    try do
+      %Tag{}
+      |> Tag.changeset(%{ns: ns, name: name})
+      |> Repo.insert!()
+    rescue
+      Sqlite.DbConnection.Error -> :probably_already_exists
+    end
+
+    find_tag(ns, name)
+  end
+
   alias Molabhbot.Search.Namespace
 
   @doc """
