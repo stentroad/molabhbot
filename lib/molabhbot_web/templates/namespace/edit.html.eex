@@ -1,5 +1,0 @@
-<h2>Edit Namespace</h2>
-
-<%= render "form.html", Map.put(assigns, :action, namespace_path(@conn, :update, @namespace)) %>
-
-<span><%= link "Back", to: namespace_path(@conn, :index) %></span>
