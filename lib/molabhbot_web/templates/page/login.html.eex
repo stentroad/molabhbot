@@ -22,6 +22,4 @@
     <%= submit "Login", class: "btn btn-primary" %>
 </div>
 
-<div id="elm-app"></div>
-
 <% end %>

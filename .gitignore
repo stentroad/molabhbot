@@ -30,9 +30,3 @@ npm-debug.log
 /nogit
 start-dev
 vps-alias
-
-# elm stuff
-assets/elm/elm-stuff/*
-!assets/elm/elm-stuff/exact-dependencies.json
-assets/js/elm.js
-

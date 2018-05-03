@@ -43,7 +43,6 @@ defmodule Molabhbot.Mixfile do
       {:cowboy, "~> 1.0"},
       {:comeonin, "~> 4.1"},
       {:bcrypt_elixir, "~> 1.0"},
-      {:phoenix_elm_warn, "~> 1.0", only: :dev, path: "../phoenix_elm_warn"},
       {:httpoison, "~> 1.0"},
       {:timex, "~> 3.2"},
       {:gen_state_machine, "~> 2.0"},

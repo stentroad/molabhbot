@@ -19,10 +19,3 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 import socket from "./socket"
-
-import Elm from "./elm.js"
-
-let elmDiv = document.getElementById("elm-app")
-if (elmDiv !== undefined) {
-    Elm.Main.embed(elmDiv)
-}
