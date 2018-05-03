@@ -17,8 +17,6 @@ defmodule MolabhbotWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
-    socket "/phoenix/elm_warn/socket", Phoenix.ElmWarn.Socket
-    plug Phoenix.ElmWarn
   end
 
   plug Plug.RequestId
