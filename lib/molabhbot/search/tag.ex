@@ -6,7 +6,8 @@ defmodule Molabhbot.Search.Tag do
 
   schema "tags" do
     field :name, :string
-    field :ns, :string
+
+    belongs_to :namespace, Molabhbot.Search.Namespace
 
     timestamps()
   end
@@ -14,9 +15,8 @@ defmodule Molabhbot.Search.Tag do
   @doc false
   def changeset(%Tag{} = tag, attrs) do
     tag
-    |> cast(attrs, [:ns, :name])
-    |> validate_required([:ns, :name])
-    |> unique_constraint(:ns)
+    |> cast(attrs, [:namespace_id, :name])
+    |> validate_required([:namespace_id, :name])
     |> unique_constraint(:name)
   end
 end

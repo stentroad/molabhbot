@@ -5,8 +5,10 @@ defmodule Molabhbot.Search do
 
   import Ecto.Query, warn: false
   alias Molabhbot.Repo
+  alias Ecto.Multi
 
   alias Molabhbot.Search.Tag
+  alias Molabhbot.Search.Namespace
 
   @doc """
   Returns the list of tags.
@@ -124,19 +126,57 @@ defmodule Molabhbot.Search do
 
   """
   def find_or_create_tag(ns, name) do
-    try do
-      %Tag{}
-      |> Tag.changeset(%{ns: ns, name: name})
-      |> Repo.insert!()
-    rescue
-      Sqlite.DbConnection.Error -> :probably_already_exists
-    end
+    # # first we need to create or fetch the namespace id
+    # # or create the namespace if it doesn't exist
+    # try do
+    #   # first try to create namespace and add tag in a single transaction
+    #   ns_changeset =
+    #     %Namespace{}
+    #     |> Namespace.changeset(%{ns: ns})
 
-    find_tag(ns, name)
+    #   multi =
+    #     Multi.new
+    #     |> Multi.insert(:ns, ns_changeset)
+    #     |> Multi.run(:tag, fn %{ns: ns} ->
+    #     tag_changeset =
+    #       %Tag{namespace_id: ns.id}
+    #       |> Tag.changeset(%{name: name})
+    #     Repo.insert(tag_changeset)
+    #   end)
+    #     Repo.transaction(multi)
+    # rescue
+    #   Sqlite.DbConnection.Error ->
+    #     # presumably namespace already exists
+    #     ns_id = Repo.one(
+    #   from ns in Namespace,
+    #   select: ns.id,
+    #   where: ns.ns == ^ns
+    # )
+    #   %Tag{namespace_id: ns_id}
+    #   |> Tag.changeset(%{name: name})
+    #   |> Repo.insert!()
+    # end
   end
 
-  alias Molabhbot.Search.Namespace
+  # try do
+  #   %Tag{}
+  #   |> Tag.changeset(%{ns: ns, name: name})
+  #   |> Repo.insert!()
+  # rescue
+  #   Sqlite.DbConnection.Error -> :probably_already_exists
+  # end
 
+  # find_tag(ns, name)
+def find_or_create_ns(ns) do
+  %Namespace{}
+  |> Ecto.Changeset.change(ns: ns)
+  |> Ecto.Changeset.unique_constraint(:ns)
+  |> Repo.insert
+  |> case do
+       {:ok, ns} -> ns
+       {:error, _} -> Repo.get_by!(Namespace, ns: ns)
+     end
+end
   @doc """
   Returns the list of namespaces.
 
@@ -231,3 +271,5 @@ defmodule Molabhbot.Search do
     Namespace.changeset(namespace, %{})
   end
 end
+
+
