@@ -6,9 +6,9 @@ defmodule Molabhbot.AccountsTest do
   describe "users" do
     alias Molabhbot.Accounts.User
 
-    @valid_attrs %{email: "some email", password_hash: "some password_hash", username: "some username"}
-    @update_attrs %{email: "some updated email", password_hash: "some updated password_hash", username: "some updated username"}
-    @invalid_attrs %{email: nil, password_hash: nil, username: nil}
+    @valid_attrs %{email: "email@test.com", password: "some password_hash", password_confirmation: "some password_hash", username: "some username"}
+    @update_attrs %{email: "updated-email@test.com", password: "some updated password_hash", password_confirmation: "some updated password_hash", username: "some updated username"}
+    @invalid_attrs %{email: nil, password: nil, username: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -26,14 +26,13 @@ defmodule Molabhbot.AccountsTest do
 
     test "get_user!/1 returns the user with given id" do
       user = user_fixture()
-      assert Accounts.get_user!(user.id) == user
+      assert Accounts.get_user!(user.id) == %User{user | password: nil, password_confirmation: nil}
     end
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.email == "some email"
-      assert user.password_hash == "some password_hash"
-      assert user.username == "some username"
+      assert user.email == @valid_attrs.email
+      assert user.username == @valid_attrs.username
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -44,15 +43,14 @@ defmodule Molabhbot.AccountsTest do
       user = user_fixture()
       assert {:ok, user} = Accounts.update_user(user, @update_attrs)
       assert %User{} = user
-      assert user.email == "some updated email"
-      assert user.password_hash == "some updated password_hash"
-      assert user.username == "some updated username"
+      assert user.email == @update_attrs.email
+      assert user.username == @update_attrs.username
     end
 
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
-      assert user == Accounts.get_user!(user.id)
+      assert %User{user | password: nil, password_confirmation: nil} == Accounts.get_user!(user.id)
     end
 
     test "delete_user/1 deletes the user" do
