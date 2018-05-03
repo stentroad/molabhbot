@@ -52,7 +52,11 @@ config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
 config :molabhbot, Molabhbot.Repo,
-  adapter: Sqlite.Ecto2,
-  database: "molabhbot.sqlite3"
+  adapter: Ecto.Adapters.Postgres,
+  username: "postgres",
+  password: "postgres",
+  database: "molabhbot_dev",
+  hostname: "molabhbotdb.local",
+  pool_size: 10
 
 import_config "schedule.exs"
