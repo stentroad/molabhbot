@@ -15,5 +15,5 @@ config :molabhbot, Molabhbot.Repo,
   username: "postgres",
   password: "postgres",
   database: "molabhbot_test",
-  hostname: "localhost",
+  hostname: "molabhbotdb.local",
   pool: Ecto.Adapters.SQL.Sandbox
