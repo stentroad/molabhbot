@@ -1,0 +1,36 @@
+# usage: source ./docker-alias
+DOCKER='docker'
+MACHINE='docker-machine'
+COMPOSE='docker-compose -f docker/docker-compose.yml'
+
+alias dockm-start="${MACHINE} start"
+alias dockm-stop="${MACHINE} stop"
+alias dockm-env="eval $(${MACHINE} env)"
+alias dockm-ip="${MACHINE} ip"
+
+alias dock-ps="${COMPOSE} ps"
+alias dock-start="${COMPOSE} start"
+alias dock-stop="${COMPOSE} stop"
+
+alias dock-stop-db="${COMPOSE} stop db"
+
+alias dock-build="${COMPOSE} build"
+alias dock-build-db="${COMPOSE} build db"
+
+alias dock-rebuild="${COMPOSE} build --no-cache"
+alias dock-rebuild-db="${COMPOSE} build --no-cache db"
+
+alias dock-restart-db="${COMPOSE} restart db"
+
+alias dock-up="${COMPOSE} up --no-start"
+alias dock-up-db="${COMPOSE} up --no-start db"
+
+alias dock-logs-db="${COMPOSE} logs db"
+
+alias dock-shell-db="${COMPOSE} exec db bash --login"
+
+alias dock-show="${COMPOSE} ps -q | xargs docker container inspect -f '{{ range .Mounts }}{{ .Name }}:{{ .Destination }} {{ end }}'"
+alias dock-cleanv="${DOCKER} volume ls -qf dangling=true | xargs ${DOCKER} volume rm"
+alias dock-cleani="${DOCKER} images -qf dangling=true | xargs ${DOCKER} rmi"
+alias dock-prune="read -p 'Are you sure? You probably want to run dock-clean(v|i) to clean up dangling volumes and/or images. Press Enter to Continue with dock-prune which will remove all docker containers. Ctrl-C to abort.' && ${DOCKER} system prune -a"
+alias dock-down="read -p 'Are you sure? You probably want to run dock-stop instead of dock-down. Press Enter to Continue with dock-down which will remove the db container. Ctrl-C to abort.' && ${COMPOSE} down"

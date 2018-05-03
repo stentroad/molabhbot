@@ -1,0 +1,24 @@
+# ./docker-compose.yml
+
+version: '3'
+
+services:
+
+  db:
+    networks:
+      - molabhbot
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: molabhbot-db
+    hostname: db
+    volumes:
+      - "molabhbot-db-data:/var/lib/postgresql/data"
+    ports:
+      - 5432:5432
+
+volumes:
+  molabhbot-db-data:
+
+networks:
+  molabhbot:
