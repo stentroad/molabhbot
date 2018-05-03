@@ -20,7 +20,7 @@ defmodule Molabhbot.Mixfile do
   def application do
     [
       mod: {Molabhbot.Application, []},
-      extra_applications: [:logger, :runtime_tools, :timex]
+      extra_applications: [:logger, :runtime_tools, :timex, :coherence]
     ]
   end
 
@@ -41,7 +41,6 @@ defmodule Molabhbot.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
-      {:comeonin, "~> 4.1"},
       {:bcrypt_elixir, "~> 1.0"},
       {:httpoison, "~> 1.0"},
       {:timex, "~> 3.2"},
@@ -51,6 +50,7 @@ defmodule Molabhbot.Mixfile do
       {:floki, "~> 0.20.0"},
       {:exsync, "~> 0.2.1", only: :dev},
       {:quantum, "~> 2.2"},
+      {:coherence, "~> 0.5.0"},
     ]
   end
 
