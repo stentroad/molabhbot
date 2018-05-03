@@ -2,7 +2,7 @@ defmodule Molabhbot.Tag do
   use GenStateMachine, callback_mode: :state_functions
   alias Molabhbot.Telegram.Build
   alias Molabhbot.Telegram.Reply
-  alias Molabhbot.Search
+  #alias Molabhbot.Search
 
   def init(%{chat_id: chat_id} = initial_data) do
     :gproc.reg({:n,:l,{:fsm, :tag, chat_id}})
@@ -114,15 +114,15 @@ defmodule Molabhbot.Tag do
   end
 
   defp save_tag({:hashtag, {ns,tag}, _val}) do
-    Search.find_or_create_tag(ns,tag)
+    #Search.find_or_create_tag(ns,tag)
   end
   defp save_tag({:hashtag, tag, _val}) do
-    Search.find_or_create_tag("__none",tag)
+    #Search.find_or_create_tag("__none",tag)
   end
   defp save_tag({:hashtag, {ns, tag}}) do
-    Search.find_or_create_tag(ns,tag)
+    #Search.find_or_create_tag(ns,tag)
   end
   defp save_tag({:hashtag, tag}) do
-    Search.find_or_create_tag("__none",tag)
+    #Search.find_or_create_tag("__none",tag)
   end
 end
