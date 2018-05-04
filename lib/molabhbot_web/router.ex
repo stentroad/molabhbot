@@ -48,6 +48,7 @@ defmodule MolabhbotWeb.Router do
     pipe_through :protected
     # add protected resources below
     get "/", PageController, :index
+    resources "/namespaces", NamespaceController
   end
 
   scope "/telegram/:telegram_key", MolabhbotWeb do
