@@ -1,0 +1,5 @@
+<h2>New Namespace</h2>
+
+<%= render "form.html", Map.put(assigns, :action, namespace_path(@conn, :create)) %>
+
+<span><%= link "Back", to: namespace_path(@conn, :index) %></span>
