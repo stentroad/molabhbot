@@ -51,6 +51,7 @@ defmodule Molabhbot.Mixfile do
       {:exsync, "~> 0.2.1", only: :dev},
       {:quantum, "~> 2.2"},
       {:coherence, "~> 0.5.0"},
+      {:credo, "~> 0.9.2", only: [:dev, :test]}
     ]
   end
 
