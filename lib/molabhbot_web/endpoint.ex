@@ -33,10 +33,11 @@ defmodule MolabhbotWeb.Endpoint do
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
-  plug Plug.Session,
-    store: :cookie,
+  @session_config store: :cookie,
     key: "_molabhbot_key",
     signing_salt: "2EMKa27u"
+
+  plug Plug.Session, @session_config
 
   plug MolabhbotWeb.Router
 
@@ -53,5 +54,9 @@ defmodule MolabhbotWeb.Endpoint do
     else
       {:ok, config}
     end
+  end
+
+  def get_session_config() do
+    @session_config 
   end
 end

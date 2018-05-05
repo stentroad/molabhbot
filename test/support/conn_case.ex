@@ -45,12 +45,7 @@ defmodule MolabhbotWeb.ConnCase do
 
   def fake_coherence_login(conn) do
     # fake a login as 'testuser@example.com'
-    session_config = Plug.Session.init(
-      # copy from your endpoint.ex - plug Plug.Session
-      store: :cookie,
-      key: "_molabhbot_key",
-      signing_salt: "2EMKa27u"
-    )
+    session_config = Plug.Session.init MolabhbotWeb.Endpoint.get_session_config()
     user_schema = Config.user_schema()
     lockable? = user_schema.lockable?()
     user = Config.repo.one(from u in user_schema, where: field(u, :email) == "testuser@example.com")
