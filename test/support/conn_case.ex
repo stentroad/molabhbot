@@ -37,29 +37,31 @@ defmodule MolabhbotWeb.ConnCase do
       Ecto.Adapters.SQL.Sandbox.mode(Molabhbot.Repo, {:shared, self()})
     end
 
-    # Fake a login as 'testuser@example.com'
+    conn = Phoenix.ConnTest.build_conn()
+    |> fake_coherence_login()
+
+    {:ok, conn: conn}
+  end
+
+  def fake_coherence_login(conn) do
+    # fake a login as 'testuser@example.com'
     session_config = Plug.Session.init(
       # copy from your endpoint.ex - plug Plug.Session
       store: :cookie,
       key: "_molabhbot_key",
       signing_salt: "2EMKa27u"
     )
-    conn = Phoenix.ConnTest.build_conn()
-
     user_schema = Config.user_schema()
     lockable? = user_schema.lockable?()
     user = Config.repo.one(from u in user_schema, where: field(u, :email) == "testuser@example.com")
+    conn = conn
+    |> Plug.Session.call(session_config)
+    |> Plug.Conn.fetch_session()
 
-    conn =
-      conn
-      |> Plug.Session.call(session_config)
-      |> Plug.Conn.fetch_session()
-
-    conn = Config.auth_module()
+    Config.auth_module()
     |> apply(Config.create_login(), [conn, user, [id_key: Config.schema_key()]])
     |> Coherence.SessionController.reset_failed_attempts(user, lockable?)
 
-    {:ok, conn: conn}
   end
 
 end
