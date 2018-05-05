@@ -1,6 +1,8 @@
 defmodule MolabhbotWeb.TagControllerTest do
   use MolabhbotWeb.ConnCase
 
+  @moduletag fake_login: "testuser@example.com"
+
   alias Molabhbot.Search
 
   @create_attrs %{name: "some name"}
