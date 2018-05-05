@@ -29,7 +29,7 @@ defmodule Molabhbot.Wiki do
   def ensure_wiki_started(%{"chat" => %{"id" => chat_id}} = msg) do
     IO.inspect chat_id, label: "start process for chat id"
 
-    case :gproc.where({:n,:l,{:chat,:event,chat_id}}) do
+    case :gproc.where({:n, :l, {:chat, :event, chat_id}}) do
       :undefined ->
         initial_data = %{first_msg: msg, chat_id: chat_id, telegram_url: nil}
         GenStateMachine.start(__MODULE__, initial_data)
@@ -39,14 +39,14 @@ defmodule Molabhbot.Wiki do
   end
 
   def new_msg(%{"chat" => %{"id" => chat_id}} = msg) do
-    case :gproc.where({:n,:l,{:chat, :event, chat_id}}) do
+    case :gproc.where({:n, :l, {:chat, :event, chat_id}}) do
       pid when is_pid(pid) ->
         GenStateMachine.call(pid, {:new_msg, msg})
     end
   end
 
   def already_chatting?(chat_id) do
-    is_pid(:gproc.where({:n,:l,{:chat, :event, chat_id}}))
+    is_pid(:gproc.where({:n, :l, {:chat, :event, chat_id}}))
   end
 
   defp links_to_html(links) do

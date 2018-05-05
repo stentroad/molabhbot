@@ -30,7 +30,7 @@ defmodule Molabhbot.Telegram.Command do
 
   def process_cmd(msg, "/help", _), do: mola_bot_help(msg)
   def process_cmd(msg, "/start", _), do: start(msg)
-  def process_cmd(msg, "/pinout", args), do: pinout(msg,args)
+  def process_cmd(msg, "/pinout", args), do: pinout(msg, args)
   def process_cmd(msg, "/event", _), do: event(msg)
   def process_cmd(msg, "/wiki", _), do: wiki(msg)
   def process_cmd(msg, "/tag", _), do: tag(msg)
@@ -67,7 +67,9 @@ defmodule Molabhbot.Telegram.Command do
   end
 
   defp pinout(msg,args) do
-    Arduino.arduino(Enum.join(args," "))
+    args
+    |> Enum.join(" ")
+    |> Arduino.arduino()
     |> Build.chat_message_reply(msg)
   end
 

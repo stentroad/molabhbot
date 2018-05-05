@@ -1,7 +1,9 @@
 defmodule Molabhbot.Telegram.Arduino do
 
   def arduino(user_input) do
-    get_board(user_input) |> ascii_art_arduino
+    user_input
+    |> get_board()
+    |> ascii_art_arduino
   end
 
   def get_board(user_input) do
@@ -31,7 +33,8 @@ defmodule Molabhbot.Telegram.Arduino do
 
   defp arduino_inline_results() do
     for {board, title} <- arduino_defs() do
-      ascii_art_arduino(board)
+      board
+      |> ascii_art_arduino()
       |> inline_query_result_article(title, "Arduino " <> title)
     end
   end

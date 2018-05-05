@@ -49,7 +49,7 @@ defmodule Molabhbot.WikiLinks do
 
   defp parse_wiki_links(body, url) do
     links = Floki.find(body, ".level3 div.li a")
-    for {"a",[{"href", href}|_],[desc]} <- links, do: {url <> href, desc}
+    for {"a", [{"href", href}|_], [desc]} <- links, do: {url <> href, desc}
   end
 
 end

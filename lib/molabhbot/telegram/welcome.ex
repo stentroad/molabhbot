@@ -3,7 +3,7 @@ defmodule Molabhbot.Telegram.Welcome do
   alias Molabhbot.Telegram.User
   alias Molabhbot.Telegram.Build
 
-  def welcome_new_users(%{"new_chat_members" => new_chat_members}=msg) do
+  def welcome_new_users(%{"new_chat_members" => new_chat_members} = msg) do
     new_chat_members
     |> first_names()
     |> welcome_text()
@@ -35,7 +35,7 @@ defmodule Molabhbot.Telegram.Welcome do
     u
   end
 
-  defp user_join([u1,u2]) do
+  defp user_join([u1, u2]) do
     u1 <> " e " <> u2
   end
 

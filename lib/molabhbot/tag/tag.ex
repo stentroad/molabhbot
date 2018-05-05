@@ -5,7 +5,7 @@ defmodule Molabhbot.Tag do
   #alias Molabhbot.Search
 
   def init(%{chat_id: chat_id} = initial_data) do
-    :gproc.reg({:n,:l,{:fsm, :tag, chat_id}})
+    :gproc.reg({:n, :l, {:fsm, :tag, chat_id}})
     {:ok, :started, initial_data}
   end
 
@@ -16,14 +16,14 @@ defmodule Molabhbot.Tag do
     {:next_state, :gather_tagged_content, data, [{:reply, from, :ok}]}
   end
 
-  def gather_tagged_content({:call, from}, {:new_msg, %{"text" => "/tag"}=msg}, data) do
+  def gather_tagged_content({:call, from}, {:new_msg, %{"text" => "/tag"} = msg}, data) do
     "Already tagging. Add more content or type /tagdone when done."
     |> Build.chat_message(msg, %{force_reply: true})
     |> Reply.post_reply("sendMessage")
 
     {:next_state, :started, data, [{:reply, from, :ok}]}
   end
-  def gather_tagged_content({:call, from}, {:new_msg, %{"text" => "/tagdone"}=msg}, data) do
+  def gather_tagged_content({:call, from}, {:new_msg, %{"text" => "/tagdone"} = msg}, data) do
     data.content
     |> split()
     |> tags_only()
@@ -35,7 +35,7 @@ defmodule Molabhbot.Tag do
 
     {:next_state, :started, %{data | content: ""}, [{:reply, from, :ok}]}
   end
-  def gather_tagged_content({:call, from}, {:new_msg, msg}, %{content: so_far}=data) do
+  def gather_tagged_content({:call, from}, {:new_msg, msg}, %{content: so_far} = data) do
     new_content = so_far <> msg["text"]
     IO.inspect new_content, label: "content so far"
 
@@ -57,10 +57,10 @@ defmodule Molabhbot.Tag do
 
   defp hash_taggify("#" <> hashtag) do
     case Regex.run(~r{([\w-_]+)(\.([\w-_]+))?(\[([\w-_ ]+)\])?}, hashtag) do
-      [_,ns, _, tag] -> {:hashtag, {ns, tag}}
-      [_,tag,"","",_,val] -> {:hashtag, tag, val}
-      [_,ns,_,tag,_,val] -> {:hashtag, {ns,tag}, val}
-      [_,tag] -> {:hashtag, tag}
+      [_, ns, _, tag] -> {:hashtag, {ns, tag}}
+      [_, tag, "", "", _, val] -> {:hashtag, tag, val}
+      [_, ns, _,tag, _, val] -> {:hashtag, {ns, tag}, val}
+      [_, tag] -> {:hashtag, tag}
     end
   end
   defp hash_taggify(other), do: other
@@ -70,7 +70,7 @@ defmodule Molabhbot.Tag do
   def ensure_started(%{"chat" => %{"id" => chat_id}} = msg) do
     IO.inspect chat_id, label: "start process for chat id"
 
-    case :gproc.where({:n,:l,{:fsm, :tag, chat_id}}) do
+    case :gproc.where({:n, :l, {:fsm, :tag, chat_id}}) do
       :undefined ->
         initial_data = %{first_msg: msg, chat_id: chat_id, content: ""}
         GenStateMachine.start(__MODULE__, initial_data)
@@ -80,14 +80,14 @@ defmodule Molabhbot.Tag do
   end
 
   def new_msg(%{"chat" => %{"id" => chat_id}} = msg) do
-    case :gproc.where({:n,:l,{:fsm, :tag, chat_id}}) do
+    case :gproc.where({:n, :l, {:fsm, :tag, chat_id}}) do
       pid when is_pid(pid) ->
         GenStateMachine.call(pid, {:new_msg, msg})
     end
   end
 
   def already_tagging?(chat_id) do
-    is_pid(:gproc.where({:n,:l,{:fsm, :tag, chat_id}}))
+    is_pid(:gproc.where({:n, :l, {:fsm, :tag, chat_id}}))
   end
 
   defp hashtag?({:hashtag, _, _}), do: true
@@ -113,7 +113,7 @@ defmodule Molabhbot.Tag do
     save_tags(t)
   end
 
-  defp save_tag({:hashtag, {ns,tag}, _val}) do
+  defp save_tag({:hashtag, {ns, tag}, _val}) do
     #Search.find_or_create_tag(ns,tag)
   end
   defp save_tag({:hashtag, tag, _val}) do

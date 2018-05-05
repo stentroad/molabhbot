@@ -58,11 +58,11 @@ defmodule MolabhbotWeb.Router do
     post "/", TelegramController, :new_message
   end
 
-  defp validate_telegram_key(conn,_) do
+  defp validate_telegram_key(conn, _) do
     telegram_webhook_key = MolabhbotWeb.Endpoint.config(:secret_key_telegram)
     sent_key = conn.path_params["telegram_key"]
     if sent_key == telegram_webhook_key do
-	    conn
+      conn
     else
       conn
       |> put_resp_content_type("text/plain")

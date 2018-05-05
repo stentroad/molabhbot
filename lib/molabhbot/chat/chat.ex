@@ -10,7 +10,7 @@ defmodule Molabhbot.Chat do
 
   def started({:call, from}, {:new_msg, msg}, data) do
     "Please enter event telegra.ph URL?"
-    |> Build.chat_message(msg,%{force_reply: true})
+    |> Build.chat_message(msg, %{force_reply: true})
     |> Reply.post_reply("sendMessage")
     {:next_state, :asked_for_telegraph_url, data, [{:reply, from, :ok}]}
   end
@@ -22,7 +22,7 @@ defmodule Molabhbot.Chat do
     cond do
       fuzzyurl.hostname == "telegra.ph" ->
         "Ok, got it thanks!"
-        |> Build.chat_message(msg,%{force_reply: true})
+        |> Build.chat_message(msg, %{force_reply: true})
         |> Reply.post_reply("sendMessage")
         # fetch the url
         url
@@ -36,7 +36,7 @@ defmodule Molabhbot.Chat do
         {:stop_and_reply, :normal, [{:reply, from, :ok}]}
       true ->
         "Sorry, I don't understand.  Please Enter a valid event telegra.ph URL?"
-        |> Build.chat_message(msg,%{force_reply: true})
+        |> Build.chat_message(msg, %{force_reply: true})
         |> Reply.post_reply("sendMessage")
         {:next_state, :asked_for_telegraph_url, data, [{:reply, from, :ok}]}
     end
