@@ -49,6 +49,7 @@ defmodule MolabhbotWeb.Router do
     # add protected resources below
     get "/", PageController, :index
     resources "/namespaces", NamespaceController
+    resources "/tags", TagController
   end
 
   scope "/telegram/:telegram_key", MolabhbotWeb do
