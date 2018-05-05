@@ -31,24 +31,26 @@ defmodule MolabhbotWeb.ConnCase do
 
 
   setup tags do
-    # IO.inspect tags, label: "TAGS ****"
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Molabhbot.Repo)
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Molabhbot.Repo, {:shared, self()})
     end
 
     conn = Phoenix.ConnTest.build_conn()
-    |> fake_coherence_login()
+    conn = if tags[:fake_login] do
+      fake_coherence_login(conn, tags[:fake_login])
+    else
+      conn
+    end
 
     {:ok, conn: conn}
   end
 
-  def fake_coherence_login(conn) do
-    # fake a login as 'testuser@example.com'
+  def fake_coherence_login(conn, email) do
     session_config = Plug.Session.init MolabhbotWeb.Endpoint.get_session_config()
     user_schema = Config.user_schema()
     lockable? = user_schema.lockable?()
-    user = Config.repo.one(from u in user_schema, where: field(u, :email) == "testuser@example.com")
+    user = Config.repo.one(from u in user_schema, where: field(u, :email) == ^email)
     conn = conn
     |> Plug.Session.call(session_config)
     |> Plug.Conn.fetch_session()
