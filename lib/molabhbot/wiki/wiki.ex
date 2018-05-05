@@ -5,7 +5,7 @@ defmodule Molabhbot.Wiki do
   alias Molabhbot.WikiLinks
 
   def init(%{chat_id: chat_id} = initial_data) do
-    :gproc.reg({:n,:l,{:chat,:event,chat_id}})
+    :gproc.reg({:n, :l, {:chat, :event, chat_id}})
     {:ok, :started, initial_data}
   end
 

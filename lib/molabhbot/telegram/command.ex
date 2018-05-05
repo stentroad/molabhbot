@@ -18,14 +18,14 @@ defmodule Molabhbot.Telegram.Command do
 
   def process_bot_cmds(msg) do
     bot_cmds = filter_bot_cmds(msg)
-    bot_cmd_results = Enum.map(bot_cmds,fn(_) -> handle_bot_cmd(msg) end)
+    bot_cmd_results = Enum.map(bot_cmds, fn(_) -> handle_bot_cmd(msg) end)
     #Enum.join(bot_cmd_results, "\n")
     IO.inspect bot_cmd_results, label: "process_bot_cmds"
   end
 
   def handle_bot_cmd(msg) do
     {cmd, args} = Util.split_cmd_args(msg["text"])
-    process_cmd(msg,cmd,args)
+    process_cmd(msg, cmd, args)
   end
 
   def process_cmd(msg, "/help", _), do: mola_bot_help(msg)
@@ -66,7 +66,7 @@ defmodule Molabhbot.Telegram.Command do
     |> Build.chat_message_reply(msg)
   end
 
-  defp pinout(msg,args) do
+  defp pinout(msg, args) do
     args
     |> Enum.join(" ")
     |> Arduino.arduino()

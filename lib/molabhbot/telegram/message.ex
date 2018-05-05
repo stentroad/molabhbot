@@ -53,8 +53,8 @@ defmodule Molabhbot.Telegram.Message do
     respond_to_msgs(rest, msg)
   end
 
-  def respond_to_msg(nil,_), do: nil
-  def respond_to_msg(%{} = response,_) do
+  def respond_to_msg(nil, _), do: nil
+  def respond_to_msg(%{} = response, _) do
     response
     |> Reply.post_reply("sendMessage")
   end

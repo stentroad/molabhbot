@@ -59,7 +59,7 @@ defmodule Molabhbot.Tag do
     case Regex.run(~r{([\w-_]+)(\.([\w-_]+))?(\[([\w-_ ]+)\])?}, hashtag) do
       [_, ns, _, tag] -> {:hashtag, {ns, tag}}
       [_, tag, "", "", _, val] -> {:hashtag, tag, val}
-      [_, ns, _,tag, _, val] -> {:hashtag, {ns, tag}, val}
+      [_, ns, _, tag, _, val] -> {:hashtag, {ns, tag}, val}
       [_, tag] -> {:hashtag, tag}
     end
   end

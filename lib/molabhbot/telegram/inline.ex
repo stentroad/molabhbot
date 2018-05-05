@@ -9,8 +9,7 @@ defmodule Molabhbot.Telegram.Inline do
     {cmd, _args} = Util.split_cmd_args(query["query"])
     case cmd do
       "pinout" -> reply_to_pinout(query)
-      "wiki" -> reply_to_wiki(query) 
-      _ -> nil # FIXME: reply with help or unknown command shrug?
+      "wiki" -> reply_to_wiki(query)
     end
   end
 
@@ -27,7 +26,7 @@ defmodule Molabhbot.Telegram.Inline do
     |> Reply.post_reply("answerInlineQuery")
   end
 
-  def links_inline_response(links,query) do
+  def links_inline_response(links, query) do
     %{"inline_query_id": query["id"],
       "results": links_inline_results(links),
       "parse_mode": "Html"}

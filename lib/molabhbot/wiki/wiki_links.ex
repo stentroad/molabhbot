@@ -43,7 +43,9 @@ defmodule Molabhbot.WikiLinks do
   end
 
   defp fetch_html(url) do
-    %HTTPoison.Response{body: body} = HTTPoison.get!(url, [], follow_redirect: true)
+    %HTTPoison.Response{body: body} =
+      url
+      |> HTTPoison.get!([], follow_redirect: true)
     body
   end
 

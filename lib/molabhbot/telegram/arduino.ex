@@ -40,10 +40,10 @@ defmodule Molabhbot.Telegram.Arduino do
   end
 
   defp arduino_defs() do
-    [{:uno,"Uno"},
-     {:mega,"Mega"},
-     {:nano,"Nano"},
-     {:"pro-mini","Pro-mini"}]
+    [{:uno, "Uno"},
+     {:mega, "Mega"},
+     {:nano, "Nano"},
+     {:"pro-mini", "Pro-mini"}]
   end
 
   defp inline_query_result_article(message_text, title, description) do
