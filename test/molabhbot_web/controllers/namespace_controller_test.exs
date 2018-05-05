@@ -1,7 +1,7 @@
 defmodule MolabhbotWeb.NamespaceControllerTest do
   use MolabhbotWeb.ConnCase
 
-  @moduletag fake_login: "testuser@example.com"
+  @moduletag fake_login: {"testuser@example.com", "secret"}
 
   alias Molabhbot.Search
 

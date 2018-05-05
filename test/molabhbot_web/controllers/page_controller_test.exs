@@ -1,7 +1,7 @@
 defmodule MolabhbotWeb.PageControllerTest do
   use MolabhbotWeb.ConnCase
 
-  @moduletag fake_login: "testuser@example.com"
+  @moduletag fake_login: {"testuser@example.com", "secret"}
 
   test "GET /", %{conn: conn} do
     conn = get conn, "/"
