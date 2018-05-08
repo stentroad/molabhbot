@@ -10,7 +10,8 @@ defmodule MolabhbotWeb.TagControllerTest do
   @invalid_attrs %{name: nil}
 
   def fixture(:tag) do
-    {:ok, tag} = Search.create_tag(@create_attrs)
+    {:ok, namespace} = Search.create_namespace(%{ns: "test_namespace"})
+    {:ok, tag} = Search.create_tag(Enum.into(%{namespace_id: namespace.id},@create_attrs))
     tag
   end
 
@@ -30,11 +31,10 @@ defmodule MolabhbotWeb.TagControllerTest do
 
   describe "create tag" do
     test "redirects to show when data is valid", %{conn: conn} do
-      conn = post conn, tag_path(conn, :create), tag: @create_attrs
-
+      {:ok,namespace} = Search.create_namespace(%{ns: "create_tag"})
+      conn = post conn, tag_path(conn, :create), tag: Enum.into(%{namespace_id: namespace.id}, @create_attrs)
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == tag_path(conn, :show, id)
-
       conn = get conn, tag_path(conn, :show, id)
       assert html_response(conn, 200) =~ "Show Tag"
     end

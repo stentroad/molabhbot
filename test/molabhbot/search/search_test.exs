@@ -66,16 +66,22 @@ defmodule Molabhbot.SearchTest do
   describe "tags" do
     alias Molabhbot.Search.Tag
 
+    setup do
+      namespace = namespace_fixture(%{ns: "bob"})
+      {:ok, namespace: namespace}
+    end
+
+    @valid_namespace %{ns: "tag_fixture_namespace"}
     @valid_attrs %{name: "some name"}
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil}
 
     def tag_fixture(attrs \\ %{}) do
+      {:ok, namespace} = Search.create_namespace(@valid_namespace)
       {:ok, tag} =
-        attrs
+        Enum.into(%{namespace_id: namespace.id}, attrs)
         |> Enum.into(@valid_attrs)
         |> Search.create_tag()
-
       tag
     end
 
@@ -89,8 +95,8 @@ defmodule Molabhbot.SearchTest do
       assert Search.get_tag!(tag.id) == tag
     end
 
-    test "create_tag/1 with valid data creates a tag" do
-      assert {:ok, %Tag{} = tag} = Search.create_tag(@valid_attrs)
+    test "create_tag/1 with valid data creates a tag", %{namespace: namespace} do
+      assert {:ok, %Tag{} = tag} = Search.create_tag(Enum.into(%{namespace_id: namespace.id}, @valid_attrs))
       assert tag.name == "some name"
     end
 
