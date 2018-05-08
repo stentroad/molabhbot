@@ -1,11 +1,13 @@
 defmodule Molabhbot.Search.Tag do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Molabhbot.Search.Namespace
 
 
   schema "tags" do
     field :name, :string
-    field :namespace_id, :id
+
+    belongs_to :namespace, Namespace
 
     timestamps()
   end
@@ -13,8 +15,8 @@ defmodule Molabhbot.Search.Tag do
   @doc false
   def changeset(tag, attrs) do
     tag
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :namespace_id])
+    |> validate_required([:name, :namespace_id])
     |> unique_constraint(:name)
   end
 end

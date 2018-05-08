@@ -1,10 +1,12 @@
 defmodule Molabhbot.Search.Namespace do
   use Ecto.Schema
   import Ecto.Changeset
-
+  alias Molabhbot.Search.Tag
 
   schema "namespaces" do
     field :ns, :string
+
+    has_many :tags, Tag
 
     timestamps()
   end

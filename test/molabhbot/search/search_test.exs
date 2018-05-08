@@ -121,5 +121,16 @@ defmodule Molabhbot.SearchTest do
       tag = tag_fixture()
       assert %Ecto.Changeset{} = Search.change_tag(tag)
     end
+
+    test "get_or_insert_tag/2" do
+      {:ok, tag_ev} = Search.get_or_insert_tag("mola", "event")
+      {:ok, tag_date1} = Search.get_or_insert_tag("mola", "date")
+      {:ok, tag_date2} = Search.get_or_insert_tag("mola", "date")
+      assert tag_ev.name == "event"
+      assert (tag_ev |> Repo.preload(:namespace)).namespace.ns == "mola"
+      assert tag_date1.name == "date"
+      assert tag_date1.id == tag_date2.id
+      assert (tag_date1 |> Repo.preload(:namespace)).namespace.id == (tag_date2 |> Repo.preload(:namespace)).namespace.id
+    end
   end
 end

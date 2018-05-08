@@ -5,7 +5,6 @@ defmodule Molabhbot.Search do
 
   import Ecto.Query, warn: false
   alias Molabhbot.Repo
-
   alias Molabhbot.Search.Namespace
 
   @doc """
@@ -196,5 +195,16 @@ defmodule Molabhbot.Search do
   """
   def change_tag(%Tag{} = tag) do
     Tag.changeset(tag, %{})
+  end
+
+  @doc """
+  Ensure a tag exists in the database.
+  Create it and it's associated namespace if necessary and then return the tag.
+  """
+  def get_or_insert_tag(namespace, tag) do
+    Repo.transaction(fn ->
+      n = Repo.insert!(%Namespace{ns: namespace}, on_conflict: [set: [ns: namespace]], conflict_target: :ns)
+      Repo.insert!(%Tag{name: tag, namespace_id: n.id}, on_conflict: [set: [name: tag]], conflict_target: :name)
+    end)
   end
 end
