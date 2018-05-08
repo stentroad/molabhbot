@@ -57,6 +57,7 @@ config :molabhbot, Molabhbot.Repo,
   password: "postgres",
   database: "molabhbot_dev",
   hostname: "molabhbotdb.local",
-  pool_size: 10
+  pool_size: 10,
+  migration_timestamps: [type: :utc_datetime]
 
 import_config "schedule.exs"
