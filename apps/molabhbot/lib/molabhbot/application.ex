@@ -1,34 +1,21 @@
 defmodule Molabhbot.Application do
+  @moduledoc """
+  The Mobot Application Service.
+
+  The mobot system business domain lives in this application.
+
+  Exposes API to clients such as the `MobotWeb` application
+  for use in channels, controllers, and elsewhere.
+  """
   use Application
 
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   def start(_type, _args) do
-    import Supervisor.Spec
+    import Supervisor.Spec, warn: false
 
-    # Define workers and child supervisors to be supervised
-    children = [
-      # Start the Ecto repository
+    Supervisor.start_link([
       supervisor(Molabhbot.Repo, []),
-      # Start the endpoint when the application starts
-      supervisor(MolabhbotWeb.Endpoint, []),
-
       worker(Molabhbot.WikiLinks, []),
       worker(Molabhbot.Scheduler, []),
-      # Start your own worker by calling: Molabhbot.Worker.start_link(arg1, arg2, arg3)
-      # worker(Molabhbot.Worker, [arg1, arg2, arg3]),
-    ]
-
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Molabhbot.Supervisor]
-    Supervisor.start_link(children, opts)
-  end
-
-  # Tell Phoenix to update the endpoint configuration
-  # whenever the application is updated.
-  def config_change(changed, _new, removed) do
-    MolabhbotWeb.Endpoint.config_change(changed, removed)
-    :ok
+    ], strategy: :one_for_one, name: Molabhbot.Supervisor)
   end
 end
