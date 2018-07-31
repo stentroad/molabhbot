@@ -20,5 +20,5 @@ defmodule MolabhbotWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :molabhbot
+  use Gettext, otp_app: :molabhbot_web
 end
