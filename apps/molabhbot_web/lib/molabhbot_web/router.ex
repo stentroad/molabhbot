@@ -60,7 +60,7 @@ defmodule MolabhbotWeb.Router do
   end
 
   defp validate_telegram_key(conn, _) do
-    telegram_webhook_key = Molabhbot.Endpoint.config(:secret_key_telegram)
+    telegram_webhook_key = MolabhbotWeb.Endpoint.config(:secret_key_telegram)
     sent_key = conn.path_params["telegram_key"]
     if sent_key == telegram_webhook_key do
       conn

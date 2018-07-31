@@ -6,9 +6,6 @@ use Mix.Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
-config :molabhbot, Molabhbot,
-  telegram_api_token: System.get_env("TELEGRAM_API_TOKEN"),
-  secret_key_telegram: System.get_env("SECRET_KEY_TELEGRAM")
 
 # Configure your database
 config :molabhbot, Molabhbot.Repo,

@@ -1,4 +1,4 @@
-defmodule Molabhbot.Mixfile do
+defmodule MolabhbotWeb.Mixfile do
   use Mix.Project
 
   def project do
