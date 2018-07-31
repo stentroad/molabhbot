@@ -40,22 +40,13 @@ defmodule Molabhbot.Mixfile do
       {:phoenix, "~> 1.3.3"},
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 3.2"},
-      {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.10"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.13.1"},
+      {:molabhbot, in_umbrella: true},
       {:cowboy, "~> 1.0"},
-      {:bcrypt_elixir, "~> 1.0"},
-      {:httpoison, "~> 1.0"},
       {:timex, "~> 3.2"},
-      {:gen_state_machine, "~> 2.0"},
-      {:gproc, "~> 0.6.1"},
-      {:fuzzyurl, "~> 0.9.1"},
-      {:floki, "~> 0.20.0"},
-      {:exsync, "~> 0.2.1", only: :dev},
-      {:quantum, "~> 2.2"},
       {:coherence, "~> 0.5.0"},
-      {:credo, "~> 0.9.2", only: [:dev, :test]}
     ]
   end
 
