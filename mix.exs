@@ -22,6 +22,9 @@ defmodule Molabhbot.Umbrella.Mixfile do
   # Dependencies listed here are available only for this project
   # and cannot be accessed from applications inside the apps folder
   defp deps do
-    []
+    [
+      {:exsync, "~> 0.2.1", only: :dev},
+      {:credo, "~> 0.10.0", only: [:dev, :test]}
+    ]
   end
 end

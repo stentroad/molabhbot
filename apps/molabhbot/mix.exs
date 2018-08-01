@@ -44,9 +44,7 @@ defmodule Molabhbot.Mixfile do
       {:gproc, "~> 0.6.1"},
       {:fuzzyurl, "~> 0.9.1"},
       {:floki, "~> 0.20.0"},
-      {:exsync, "~> 0.2.1", only: :dev},
-      {:quantum, "~> 2.2"},
-      {:credo, "~> 0.9.2", only: [:dev, :test]}
+      {:quantum, "~> 2.2"}
     ]
   end
 
@@ -60,7 +58,7 @@ defmodule Molabhbot.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": ["ecto.create --quiet", "ecto.migrate", "run priv/repo/seeds.exs", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "run priv/repo/seeds.exs", "test"]
     ]
   end
 end
