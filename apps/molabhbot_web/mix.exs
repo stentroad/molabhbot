@@ -42,11 +42,11 @@ defmodule MolabhbotWeb.Mixfile do
       {:phoenix_ecto, "~> 3.2"},
       {:phoenix_html, "~> 2.10"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
-      {:gettext, "~> 0.13.1"},
+      {:gettext, "0.13.1", override: true},
       {:molabhbot, in_umbrella: true},
       {:cowboy, "~> 1.0"},
       {:timex, "~> 3.2"},
-      {:coherence, "~> 0.5.0"},
+      {:coherence, git: "https://github.com/smpallen99/coherence", ref: "96607cefb1b6269c6e8dea6fab897ed9489ad749"}
     ]
   end
 
