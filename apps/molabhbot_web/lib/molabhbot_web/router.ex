@@ -8,10 +8,7 @@ defmodule MolabhbotWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    #plug Coherence.Authentication.Session
-    # TODO: Debug why this isn't working...
-    # Could be gettext version related now that I have it overridden to v0.13.1
-    # For now probably best just to wait for them to release new coherence version.
+    plug Coherence.Authentication.Session
   end
 
   pipeline :protected do
@@ -20,7 +17,7 @@ defmodule MolabhbotWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    #plug Coherence.Authentication.Session, protected: true
+    plug Coherence.Authentication.Session, protected: true
   end
 
   pipeline :api do
